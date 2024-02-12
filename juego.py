@@ -17,18 +17,21 @@ class PuzzleGUI:
         random.shuffle(numbers)
 
         self.cells = []
+        self.empty_row = self.empty_col = None
         idx = 0
         for i in range(4):
             row = []
             for j in range(4):
-                cell_value = numbers[idx] if numbers[idx] != '0' else ''
-                cell = tk.Label(self.board_frame, text=cell_value, width=5, height=2, font=('Helvetica', 16, 'bold'), bg='#ccc', relief=tk.RAISED)
-                cell.grid(row=i, column=j, padx=2, pady=2)
+                cell_value = numbers[idx]
+                cell = tk.Button(self.board_frame, text=cell_value, width=5, height=2, font=('Helvetica', 16, 'bold'), bg='#ccc', relief=tk.RAISED, command=self.handle_click)
+                cell.grid(row=i, column=j, padx=3, pady=3)
                 row.append(cell)
                 if cell_value == 0:
                     self.empty_row, self.empty_col = i, j
+                
                 # Agregar evento bind a la etiqueta de la casilla
-                cell.bind("<Button-1>", self.handle_click)
+                cell.bind("<Button-1>", lambda event, row=i, col=j: self.handle_click(event, row, col))
+                
                 idx += 1
             self.cells.append(row)
 
@@ -36,23 +39,31 @@ class PuzzleGUI:
         shuffle_button = tk.Button(self.master, text="Shuffle", command=self.shuffle_board)
         shuffle_button.pack(pady=10)
 
-    def handle_click(self, row, col):
-        print("Celda clickeada:", row, col)  # Para depurar, imprime las coordenadas de la celda clickeada
-       
+    def handle_click(self, event, row, col):
+        print("Celda clickeada:", row, col)
+        cell = self.cells[row][col]
+        print("Valor de la celda:", cell["text"])  # Imprime el valor de la celda
 
     def shuffle_board(self):
         numbers = list(range(16))
         random.shuffle(numbers)
 
         self.cells = []
+        self.empty_row = self.empty_col = None
         idx = 0
         for i in range(4):
             row = []
             for j in range(4):
-                cell_value = numbers[idx] if numbers[idx] != '0' else ''
-                cell = tk.Label(self.board_frame, text=cell_value, width=5, height=2, font=('Helvetica', 16, 'bold'), bg='#ccc', relief=tk.RAISED)
-                cell.grid(row=i, column=j, padx=2, pady=2)
+                cell_value = numbers[idx]
+                cell = tk.Button(self.board_frame, text=cell_value, width=5, height=2, font=('Helvetica', 16, 'bold'), bg='#ccc', relief=tk.RAISED, command=self.handle_click)
+                cell.grid(row=i, column=j, padx=3, pady=3)
                 row.append(cell)
+                if cell_value == 0:
+                    self.empty_row, self.empty_col = i, j
+                
+                # Agregar evento bind a la etiqueta de la casilla
+                cell.bind("<Button-1>", lambda event, row=i, col=j: self.handle_click(event, row, col))
+                
                 idx += 1
             self.cells.append(row)
 
