@@ -25,7 +25,8 @@ for i in range(3):
             ltc.append(["",cmp]) 
         else: 
             lt.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
-            ltc.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
+            ltc.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp])
+            #Con .crop dividimos la imagen en las partes que queramos
             Lab.append(Label(lf[cmp],image=lt[cmp][0],background="#3b53a0")) 
         Lab[cmp].bind("<Button-1>",lambda event,h=cmp:lol(event,h)) 
         Lab[cmp].place(x=2,y=2,width=196,height=196) 
@@ -80,7 +81,9 @@ iimw=ImageTk.PhotoImage((Image.open("Images/restartwhite.png")))
 restart=Label(t,image=iim) 
 restart.place(x=600,y=0,width=50,height=600) 
 restart.bind("<Enter>",lambda event:restart.config(image=iimw)) 
-restart.bind("<Leave>",lambda event:restart.config(image=iim)) 
+restart.bind("<Leave>",lambda event:restart.config(image=iim))
+#Con el comando enter y leave dentro del bind lo que hacemos esque cuando el cursor entra en la imagen se selecciona
+#la imagen iimw y cuando sale se selecciona la imagen iim, asi creamos un efecto de hover sobre la imagen.
 _a89=ImageTk.PhotoImage((Image.open("Images/a89.png"))) 
 a89=Label(t,image=_a89) 
 a89.place(x=600,y=600,width=50,height=50) 
@@ -144,7 +147,7 @@ def cos(event):
     youwin.place_forget() 
     changetheimage.place(x=0,y=600,width=600,height=50) 
 restart.bind("<Button-1>",cos) 
-from playsound import playsound 
+
 introf=Frame(t) 
 introf.place(x=0,y=0,width=650,height=650) 
 introi=[ImageTk.PhotoImage(Image.open("Images/1_2.png").resize((300,300))),ImageTk.PhotoImage(Image.open("Images/2_2.png").resize((300,300))),ImageTk.PhotoImage(Image.open("Images/3_2.png").resize((300,300)))] 
@@ -153,7 +156,7 @@ introl.place(x=0,y=0,width=650,height=650)
 def intro(): 
     icmp=0 
     ic=0 
-    Thread(target=lambda:playsound('g/gs.wav')).start() 
+     
     while True: 
         introl.config(image=introi[icmp]) 
         sleep(0.2) 
