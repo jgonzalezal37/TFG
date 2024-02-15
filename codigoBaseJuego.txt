@@ -16,27 +16,27 @@ Lab=[]
 cmp=0 
 from PIL import Image,ImageTk 
 path="Images/m.png" 
-for i in range(4): 
-    for j in range(4): 
+for i in range(3): 
+    for j in range(3): 
         lf.append(Frame(f)) 
-        if i==3 and j==3: 
+        if i==2 and j==2: 
             Lab.append(Label(lf[cmp],background="#242424")) 
             lt.append(["",cmp]) 
             ltc.append(["",cmp]) 
         else: 
-            lt.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
-            ltc.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp])
+            lt.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
+            ltc.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp])
             #Con .crop dividimos la imagen en las partes que queramos
             Lab.append(Label(lf[cmp],image=lt[cmp][0],background="#3b53a0")) 
         Lab[cmp].bind("<Button-1>",lambda event,h=cmp:lol(event,h)) 
-        Lab[cmp].place(x=2,y=2,width=147,height=147) 
-        lf[cmp].place(x=j*150,y=i*150,width=150,height=150) 
+        Lab[cmp].place(x=2,y=2,width=196,height=196) 
+        lf[cmp].place(x=j*200,y=i*200,width=200,height=200) 
         cmp+=1 
-index=15 
+index=8 
 from threading import Thread 
 def lol(event,h): 
     global index,t,b 
-    if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+4==index or h-4==index) : 
+    if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+3==index or h-3==index) : 
         Lab[h].config(image=ltc[index][0]) 
         ih=ltc[h][1] 
         ltc[h]=[ltc[index][0],ltc[index][1]] 
