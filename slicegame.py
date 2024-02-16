@@ -9,53 +9,54 @@ t.title((" "*80)+"Sliding puzzle")
 t.resizable(0,0) 
 f=Frame(t,bg="#000") 
 f.place(x=0,y=0,width=600,height=600) 
-lf=[] 
-lt=[] 
-ltc=[] 
-Lab=[] 
-cmp=0 
+listaFrames=[] #Almacenamos los Frames que representan cada celda del rompecabezas
+listaImagenes=[] #Lista de imagenes del rompecabezas, almacena las  imagenes que representa cada celda del rompecabezas
+listaImagenesCopia=[] #Copia de la lista anterior para que cada vez que manipulemos el orden de las imagenes al deslizar tener un
+       #un punto de partida al que poder volver
+Lab=[] #Muestra graficamente las imagenes del rompezabezas usando la libreria tkinder (listas de etiquetas)
+cmp=0 #Contador que lleva el numero de piezas creadas en el rompecabezas
 from PIL import Image,ImageTk 
 path="Images/m.png" 
 for i in range(4): 
     for j in range(4): 
-        lf.append(Frame(f)) 
+        listaFrames.append(Frame(f)) 
         if i==3 and j==3: 
-            Lab.append(Label(lf[cmp],background="#242424")) 
-            lt.append(["",cmp]) 
-            ltc.append(["",cmp]) 
+            Lab.append(Label(listaFrames[cmp],background="#242424")) 
+            listaImagenes.append(["",cmp]) 
+            listaImagenesCopia.append(["",cmp]) 
         else: 
-            lt.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
-            ltc.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp])
+            listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
+            listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp])
             #Con .crop dividimos la imagen en las partes que queramos
-            Lab.append(Label(lf[cmp],image=lt[cmp][0],background="#3b53a0")) 
+            Lab.append(Label(listaFrames[cmp],image=listaImagenes[cmp][0],background="#3b53a0")) 
         Lab[cmp].bind("<Button-1>",lambda event,h=cmp:lol(event,h)) 
         Lab[cmp].place(x=2,y=2,width=147,height=147) 
-        lf[cmp].place(x=j*150,y=i*150,width=150,height=150) 
+        listaFrames[cmp].place(x=j*150,y=i*150,width=150,height=150) 
         cmp+=1 
 index=15 
 from threading import Thread 
 def lol(event,h): 
     global index,t,b 
     if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+4==index or h-4==index) : 
-        Lab[h].config(image=ltc[index][0]) 
-        ih=ltc[h][1] 
-        ltc[h]=[ltc[index][0],ltc[index][1]] 
-        ltc[index]=["",ih] 
+        Lab[h].config(image=listaImagenesCopia[index][0]) 
+        ih=listaImagenesCopia[h][1] 
+        listaImagenesCopia[h]=[listaImagenesCopia[index][0],listaImagenesCopia[index][1]] 
+        listaImagenesCopia[index]=["",ih] 
         Lab[index].config(image="") 
         Lab[h].config(bg="#3b53a0") 
         Lab[index].config(bg="#242424") 
         k=0 
-        for i in range(len(ltc)): 
-            if ltc[i][1]==lt[i][1]: 
+        for i in range(len(listaImagenesCopia)): 
+            if listaImagenesCopia[i][1]==listaImagenes[i][1]: 
                 k+=1 
-        if k==(len(ltc)): 
+        if k==(len(listaImagenesCopia)): 
             changetheimage.place_forget() 
             youwin.place(x=0,y=600,width=600,height=50) 
             b=False 
             Thread(target=lambda y=youwin:tim(y)).start() 
-    lf[index].config(bg="white") 
+    listaFrames[index].config(bg="white") 
     index=h 
-    lf[h].config(bg="black") 
+    listaFrames[h].config(bg="black") 
 yw=ImageTk.PhotoImage((Image.open("Images/youwin.png"))) 
 yww=ImageTk.PhotoImage((Image.open("Images/youwinwhite.png"))) 
 youwin=Label(t,image=yw) 
@@ -109,18 +110,18 @@ def cticlick(event):
             messagebox.askokcancel("","The image need to has the same dimensions") 
         else: 
             path=e.name 
-            lt.clear() 
-            ltc.clear() 
+            listaImagenes.clear() 
+            listaImagenesCopia.clear() 
             t.title((" "*60)+"Sliding puzzle | The image is loading ...") 
             cmp=0 
             for i in range(3): 
                 for j in range(3): 
                     if i==2 and j==2: 
-                        lt.append(["",cmp]) 
-                        ltc.append(["",cmp]) 
+                        listaImagenes.append(["",cmp]) 
+                        listaImagenesCopia.append(["",cmp]) 
                     else: 
-                        lt.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
-                        ltc.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
+                        listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
+                        listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
                     cmp+=1
             cos(None)
     t.title((" "*80)+"Sliding puzzle") 
@@ -134,14 +135,14 @@ def f():
     t.destroy() 
 t.protocol("WM_DELETE_WINDOW", f) 
 def cos(event): 
-    global ltc,Lab,b 
+    global listaImagenesCopia,Lab,b 
     if event: 
-        shuffle(ltc) 
-    for i in range(len(ltc)): 
-        Lab[i].config(image=ltc[i][0]) 
+        shuffle(listaImagenesCopia) 
+    for i in range(len(listaImagenesCopia)): 
+        Lab[i].config(image=listaImagenesCopia[i][0]) 
         Lab[i].config(bg="#3b53a0") 
-    for j in range(len(ltc)): 
-        if ltc[j][0]=="": 
+    for j in range(len(listaImagenesCopia)): 
+        if listaImagenesCopia[j][0]=="": 
             Lab[j].config(bg="#242424") 
     b=True 
     youwin.place_forget() 
