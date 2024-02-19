@@ -40,23 +40,28 @@ def lol(event,h):
     if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+4==index or h-4==index) : 
         Lab[h].config(image=listaImagenesCopia[index][0]) 
         ih=listaImagenesCopia[h][1] 
-        listaImagenesCopia[h]=[listaImagenesCopia[index][0],listaImagenesCopia[index][1]] 
+        listaImagenesCopia[h]=[listaImagenesCopia[index][0],listaImagenesCopia[index][1]] #Intercambia el valor de las dos celdas
         listaImagenesCopia[index]=["",ih] 
+        print(index)
+        #index indica el indice donde se encuentra la celda vacia
         Lab[index].config(image="") 
-        Lab[h].config(bg="#3b53a0") 
-        Lab[index].config(bg="#242424") 
+        Lab[h].config(bg="#3b53a0") #Nueva celda clicada
+        Lab[index].config(bg="#242424") #Nueva celda vacia
+        
         k=0 
         for i in range(len(listaImagenesCopia)): 
-            if listaImagenesCopia[i][1]==listaImagenes[i][1]: 
+            if listaImagenesCopia[i][1]==listaImagenes[i][1]: #Comparamos 1 a 1 los identificadores de las dos listas
                 k+=1 
-        if k==(len(listaImagenesCopia)): 
+        if k==(len(listaImagenesCopia)): #Cuando se cumple este if todos los identificadores de las dos listas coinciden
+            #por lo que habremos llegado a la solucion
             changetheimage.place_forget() 
             youwin.place(x=0,y=600,width=600,height=50) 
             b=False 
             Thread(target=lambda y=youwin:tim(y)).start() 
     listaFrames[index].config(bg="white") 
     index=h 
-    listaFrames[h].config(bg="black") 
+    listaFrames[h].config(bg="black")
+    
 yw=ImageTk.PhotoImage((Image.open("Images/youwin.png"))) 
 yww=ImageTk.PhotoImage((Image.open("Images/youwinwhite.png"))) 
 youwin=Label(t,image=yw) 
@@ -137,7 +142,8 @@ t.protocol("WM_DELETE_WINDOW", f)
 def cos(event): 
     global listaImagenesCopia,Lab,b 
     if event: 
-        shuffle(listaImagenesCopia) 
+        shuffle(listaImagenesCopia) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
+    #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
     for i in range(len(listaImagenesCopia)): 
         Lab[i].config(image=listaImagenesCopia[i][0]) 
         Lab[i].config(bg="#3b53a0") 
@@ -148,6 +154,35 @@ def cos(event):
     youwin.place_forget() 
     changetheimage.place(x=0,y=600,width=600,height=50) 
 restart.bind("<Button-1>",cos) 
+
+def state_to_matrix(listaImagenesCopia):
+    # Convertir listaImagenesCopia a una matriz de 4x4
+    matrix = [[0] * 4 for _ in range(4)]
+    for i in range(4):
+        for j in range(4):
+            matrix[i][j] = listaImagenesCopia[i * 4 + j][1]
+    return matrix
+
+def get_successors(state):
+    # Generar los sucesores del estado actual intercambiando la posición de la pieza vacía con sus vecinos
+    successors = []
+    empty_row, empty_col = find_empty(state)
+    
+    for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        new_row, new_col = empty_row + dr, empty_col + dc
+        if 0 <= new_row < 4 and 0 <= new_col < 4:
+            new_state = [row[:] for row in state]  # Copiar el estado actual
+            new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]
+            successors.append(new_state)
+    
+    return successors
+
+def find_empty(state):
+    # Encuentra la posición de la pieza vacía en el estado actual
+    for i in range(4):
+        for j in range(4):
+            if state[i][j] == 0:
+                return i, j
 
 introf=Frame(t) 
 introf.place(x=0,y=0,width=650,height=650) 
