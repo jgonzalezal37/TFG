@@ -36,13 +36,14 @@ for i in range(4):
 index=15 
 from threading import Thread 
 def lol(event,h): 
+    #h es el numero de la pieza que fue clicada.
     global index,t,b 
     if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+4==index or h-4==index) : 
         Lab[h].config(image=listaImagenesCopia[index][0]) 
-        ih=listaImagenesCopia[h][1] 
+        ih=listaImagenesCopia[h][1]
         listaImagenesCopia[h]=[listaImagenesCopia[index][0],listaImagenesCopia[index][1]] #Intercambia el valor de las dos celdas
         listaImagenesCopia[index]=["",ih] 
-        print(index)
+        #print(index)
         #index indica el indice donde se encuentra la celda vacia
         Lab[index].config(image="") 
         Lab[h].config(bg="#3b53a0") #Nueva celda clicada
