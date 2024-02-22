@@ -161,7 +161,7 @@ def cos(event):
     youwin.place_forget() 
     changetheimage.place(x=0,y=600,width=600,height=50) 
 restart.bind("<Button-1>",cos) 
-
+#FALTA POR TERMINAR (actualmente general el estado inicial aleatoriamente con shuffle)
 def generate_initial_state():
     initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
     empty_row, empty_col = 3, 3  # Posición inicial de la casilla vacía (15)
