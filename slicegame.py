@@ -1,6 +1,7 @@
 from tkinter import * 
 from collections import deque
 from queue import PriorityQueue
+FINAL_STATE = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 t=Tk() 
 t.overrideredirect(1)
 from win32api import GetSystemMetrics 
@@ -159,6 +160,25 @@ def cos(event):
     youwin.place_forget() 
     changetheimage.place(x=0,y=600,width=600,height=50) 
 restart.bind("<Button-1>",cos) 
+
+def generate_initial_state():
+    initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
+    empty_row, empty_col = 3, 3  # Posición inicial de la casilla vacía (15)
+    for _ in range(300):  # Realizar 1000 movimientos aleatorios
+        moves = []
+        if empty_row > 0:
+            moves.append((-1, 0))  # Mover hacia arriba
+        if empty_row < 3:
+            moves.append((1, 0))  # Mover hacia abajo
+        if empty_col > 0:
+            moves.append((0, -1))  # Mover hacia la izquierda
+        if empty_col < 3:
+            moves.append((0, 1))  # Mover hacia la derecha
+        dr, dc = random.choice(moves)  # Seleccionar un movimiento aleatorio
+        new_row, new_col = empty_row + dr, empty_col + dc
+        initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
+        empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
+    return initial_state
 
 def state_to_matrix(listaImagenesCopia):
     # Convertir listaImagenesCopia a una matriz de 4x4
