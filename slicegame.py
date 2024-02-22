@@ -1,6 +1,7 @@
 from tkinter import * 
 from collections import deque
 from queue import PriorityQueue
+from random import random
 FINAL_STATE = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 t=Tk() 
 t.overrideredirect(1)
