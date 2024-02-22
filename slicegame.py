@@ -1,4 +1,6 @@
 from tkinter import * 
+from collections import deque
+from queue import PriorityQueue
 t=Tk() 
 t.overrideredirect(1)
 from win32api import GetSystemMetrics 
@@ -48,7 +50,9 @@ def lol(event,h):
         Lab[index].config(image="") 
         Lab[h].config(bg="#3b53a0") #Nueva celda clicada
         Lab[index].config(bg="#242424") #Nueva celda vacia
-        
+        matriz = state_to_matrix(listaImagenesCopia)
+        print("SOLUCION: ")
+        print(solve_puzzle_a_star(matriz))
         k=0 
         for i in range(len(listaImagenesCopia)): 
             if listaImagenesCopia[i][1]==listaImagenes[i][1]: #Comparamos 1 a 1 los identificadores de las dos listas
@@ -164,7 +168,71 @@ def state_to_matrix(listaImagenesCopia):
             matrix[i][j] = listaImagenesCopia[i * 4 + j][1]
     return matrix
 
-def get_successors(state):
+def is_goal(state):
+    final_state = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+    return state == final_state
+
+def heuristic(state):
+    goal_state = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+    total_cost = 0
+    for i in range(4):
+        for j in range(4):
+            if state[i][j] != 0:
+                row = (state[i][j] - 1) // 4
+                col = (state[i][j] - 1) % 4
+                total_cost += abs(i - row) + abs(j - col)
+    return total_cost
+
+
+def generate_successors(state):
+    successors = []
+    # Encontrar la posición de la casilla vacía
+    empty_row, empty_col = -1, -1
+    for i in range(4):
+        for j in range(4):
+            if state[i][j] == 15:
+                empty_row, empty_col = i, j
+                break
+    # Mover la casilla vacía hacia arriba, abajo, izquierda y derecha si es posible
+    for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        new_row, new_col = empty_row + dr, empty_col + dc
+        if 0 <= new_row < 4 and 0 <= new_col < 4:
+            new_state = [row[:] for row in state]  # Copiar el estado actual
+            new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]  # Intercambiar casillas
+            successors.append(new_state)
+    return successors
+
+def solve_puzzle(initial_state):
+    visited = set()
+    queue = deque([(initial_state, [])])  # Cola de tuplas: (estado actual, lista de movimientos)
+    while queue:
+        state, path = queue.popleft()
+        if is_goal(state):
+            return len(path)
+        if tuple(map(tuple, state)) not in visited:
+            visited.add(tuple(map(tuple, state)))  # Convertir lista de listas a tupla para hashable
+            for successor in generate_successors(state):
+                queue.append((successor, path + [successor]))
+    return None
+
+def solve_puzzle_a_star(initial_state):
+    visited = set()
+    pq = PriorityQueue()
+    pq.put((0, 0, initial_state))  # Tupla: (costo acumulado, pasos restantes, estado actual)
+    while not pq.empty():
+        cost, steps, state = pq.get()
+        if state == [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]:
+            return steps
+        if tuple(map(tuple, state)) not in visited:
+            visited.add(tuple(map(tuple, state)))
+            for successor in generate_successors(state):
+                h = heuristic(successor)
+                g = cost + 1  # Incrementar el costo acumulado
+                f = g + h
+                pq.put((g, steps + 1, successor))
+    return None
+
+#def get_successors(state):
     # Generar los sucesores del estado actual intercambiando la posición de la pieza vacía con sus vecinos
     successors = []
     empty_row, empty_col = find_empty(state)
@@ -178,11 +246,11 @@ def get_successors(state):
     
     return successors
 
-def find_empty(state):
+#def find_empty(state):
     # Encuentra la posición de la pieza vacía en el estado actual
     for i in range(4):
         for j in range(4):
-            if state[i][j] == 0:
+            if state[i][j] == 15:
                 return i, j
 
 introf=Frame(t) 
