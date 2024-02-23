@@ -2,7 +2,7 @@ from tkinter import *
 from collections import deque
 from queue import PriorityQueue
 from random import random
-FINAL_STATE = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+FINAL_STATE = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 t=Tk() 
 t.overrideredirect(1)
 from win32api import GetSystemMetrics 
@@ -21,28 +21,28 @@ Lab=[] #Muestra graficamente las imagenes del rompezabezas usando la libreria tk
 cmp=0 #Contador que lleva el numero de piezas creadas en el rompecabezas
 from PIL import Image,ImageTk 
 path="Images/m.png" 
-for i in range(4): 
-    for j in range(4): 
+for i in range(3): 
+    for j in range(3): 
         listaFrames.append(Frame(f)) 
-        if i==3 and j==3: 
+        if i==2 and j==2: 
             Lab.append(Label(listaFrames[cmp],background="#242424")) 
             listaImagenes.append(["",cmp]) 
             listaImagenesCopia.append(["",cmp]) 
         else: 
-            listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
-            listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp])
+            listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
+            listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp])
             #Con .crop dividimos la imagen en las partes que queramos
             Lab.append(Label(listaFrames[cmp],image=listaImagenes[cmp][0],background="#3b53a0")) 
         Lab[cmp].bind("<Button-1>",lambda event,h=cmp:lol(event,h)) 
-        Lab[cmp].place(x=2,y=2,width=147,height=147) 
-        listaFrames[cmp].place(x=j*150,y=i*150,width=150,height=150) 
+        Lab[cmp].place(x=2,y=2,width=196,height=196) 
+        listaFrames[cmp].place(x=j*200,y=i*200,width=200,height=200) 
         cmp+=1 
-index=15 
+index=8 
 from threading import Thread 
 def lol(event,h): 
     #h es el numero de la pieza que fue clicada.
     global index,t,b 
-    if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+4==index or h-4==index) : 
+    if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+3==index or h-3==index) : 
         Lab[h].config(image=listaImagenesCopia[index][0]) 
         ih=listaImagenesCopia[h][1]
         listaImagenesCopia[h]=[listaImagenesCopia[index][0],listaImagenesCopia[index][1]] #Intercambia el valor de las dos celdas
@@ -52,9 +52,13 @@ def lol(event,h):
         Lab[index].config(image="") 
         Lab[h].config(bg="#3b53a0") #Nueva celda clicada
         Lab[index].config(bg="#242424") #Nueva celda vacia
-        matriz = state_to_matrix(listaImagenesCopia)
+        #matriz = state_to_matrix(listaImagenesCopia)
+        matriz = [[0, 5, 2], [3, 6, 8], [7, 4, 1]]
+        print(matriz)
         print("SOLUCION: ")
         print(solve_puzzle_a_star(matriz))
+        print("ESTADO INICIAL: ")
+        print(generate_initial_state())
         k=0 
         for i in range(len(listaImagenesCopia)): 
             if listaImagenesCopia[i][1]==listaImagenes[i][1]: #Comparamos 1 a 1 los identificadores de las dos listas
@@ -151,6 +155,7 @@ def cos(event):
     if event: 
         shuffle(listaImagenesCopia) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
     #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
+        print(state_to_matrix(listaImagenesCopia))
     for i in range(len(listaImagenesCopia)): 
         Lab[i].config(image=listaImagenesCopia[i][0]) 
         Lab[i].config(bg="#3b53a0") 
@@ -162,7 +167,7 @@ def cos(event):
     changetheimage.place(x=0,y=600,width=600,height=50) 
 restart.bind("<Button-1>",cos) 
 #FALTA POR TERMINAR (actualmente general el estado inicial aleatoriamente con shuffle)
-def generate_initial_state():
+'''def generate_initial_state():
     initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
     empty_row, empty_col = 3, 3  # Posición inicial de la casilla vacía (15)
     for _ in range(300):  # Realizar 1000 movimientos aleatorios
@@ -179,28 +184,52 @@ def generate_initial_state():
         new_row, new_col = empty_row + dr, empty_col + dc
         initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
         empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
+    return initial_state'''
+def generate_initial_state():
+    initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
+    empty_row, empty_col = 3, 3  # Posición inicial de la casilla vacía (15)
+    for _ in range(1000):  # Realizar 1000 movimientos aleatorios
+        moves = []
+        if empty_row > 0:
+            moves.append((-1, 0))  # Mover hacia arriba
+        if empty_row < 3:
+            moves.append((1, 0))  # Mover hacia abajo
+        if empty_col > 0:
+            moves.append((0, -1))  # Mover hacia la izquierda
+        if empty_col < 3:
+            moves.append((0, 1))  # Mover hacia la derecha
+        if moves:  # Verificar si hay movimientos disponibles
+            dr, dc = random.choice(moves)  # Seleccionar un movimiento aleatorio
+            new_row, new_col = empty_row + dr, empty_col + dc
+            initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
+            empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
+        else:
+            break  # Si no hay movimientos disponibles, detener el bucle
     return initial_state
+
+
 
 def state_to_matrix(listaImagenesCopia):
     # Convertir listaImagenesCopia a una matriz de 4x4
-    matrix = [[0] * 4 for _ in range(4)]
-    for i in range(4):
-        for j in range(4):
-            matrix[i][j] = listaImagenesCopia[i * 4 + j][1]
+    matrix = [[0] * 3 for _ in range(3)]
+    for i in range(3):
+        for j in range(3):
+            matrix[i][j] = listaImagenesCopia[i * 3 + j][1]
     return matrix
 
+
 def is_goal(state):
-    final_state = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+    final_state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
     return state == final_state
 
 def heuristic(state):
-    goal_state = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+    goal_state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
     total_cost = 0
-    for i in range(4):
-        for j in range(4):
+    for i in range(3):
+        for j in range(3):
             if state[i][j] != 0:
-                row = (state[i][j] - 1) // 4
-                col = (state[i][j] - 1) % 4
+                row = (state[i][j] - 1) // 3
+                col = (state[i][j] - 1) % 3
                 total_cost += abs(i - row) + abs(j - col)
     return total_cost
 
@@ -209,15 +238,15 @@ def generate_successors(state):
     successors = []
     # Encontrar la posición de la casilla vacía
     empty_row, empty_col = -1, -1
-    for i in range(4):
-        for j in range(4):
-            if state[i][j] == 15:
+    for i in range(3):
+        for j in range(3):
+            if state[i][j] == 8:
                 empty_row, empty_col = i, j
                 break
     # Mover la casilla vacía hacia arriba, abajo, izquierda y derecha si es posible
     for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
         new_row, new_col = empty_row + dr, empty_col + dc
-        if 0 <= new_row < 4 and 0 <= new_col < 4:
+        if 0 <= new_row < 3 and 0 <= new_col < 3:
             new_state = [row[:] for row in state]  # Copiar el estado actual
             new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]  # Intercambiar casillas
             successors.append(new_state)
@@ -244,7 +273,7 @@ def solve_puzzle_a_star(initial_state):
     pq.put((0, 0, initial_state))  # Tupla: (costo acumulado, pasos restantes, estado actual)
     while not pq.empty() and steps_taken < max_steps:
         cost, steps, state = pq.get()
-        if state == [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]:
+        if state == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]:
             return steps
         if tuple(map(tuple, state)) not in visited:
             visited.add(tuple(map(tuple, state)))
@@ -253,7 +282,7 @@ def solve_puzzle_a_star(initial_state):
                 g = cost + 1  # Incrementar el costo acumulado
                 f = g + h
                 pq.put((g, steps + 1, successor))
-        steps_taken += 1
+        steps_taken += 1    
     return None
 
 #def get_successors(state):
