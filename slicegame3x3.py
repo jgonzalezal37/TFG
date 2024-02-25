@@ -1,7 +1,7 @@
 from tkinter import * 
 from collections import deque
 from queue import PriorityQueue
-from random import random
+import random
 FINAL_STATE = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 t=Tk() 
 t.overrideredirect(1)
@@ -53,12 +53,8 @@ def lol(event,h):
         Lab[h].config(bg="#3b53a0") #Nueva celda clicada
         Lab[index].config(bg="#242424") #Nueva celda vacia
         #matriz = state_to_matrix(listaImagenesCopia)
-        matriz = [[0, 5, 2], [3, 6, 8], [7, 4, 1]]
-        print(matriz)
-        print("SOLUCION: ")
-        print(solve_puzzle_a_star(matriz))
-        print("ESTADO INICIAL: ")
-        print(generate_initial_state())
+        print("ESTADO FINAL: ")
+        print(listaImagenesCopia)
         k=0 
         for i in range(len(listaImagenesCopia)): 
             if listaImagenesCopia[i][1]==listaImagenes[i][1]: #Comparamos 1 a 1 los identificadores de las dos listas
@@ -187,16 +183,16 @@ restart.bind("<Button-1>",cos)
     return initial_state'''
 def generate_initial_state():
     initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
-    empty_row, empty_col = 3, 3  # Posición inicial de la casilla vacía (15)
-    for _ in range(1000):  # Realizar 1000 movimientos aleatorios
+    empty_row, empty_col = 2, 2  # Posición inicial de la casilla vacía (15)
+    for _ in range(200):  # Realizar 1000 movimientos aleatorios
         moves = []
         if empty_row > 0:
             moves.append((-1, 0))  # Mover hacia arriba
-        if empty_row < 3:
+        if empty_row < 2:
             moves.append((1, 0))  # Mover hacia abajo
         if empty_col > 0:
             moves.append((0, -1))  # Mover hacia la izquierda
-        if empty_col < 3:
+        if empty_col < 2:
             moves.append((0, 1))  # Mover hacia la derecha
         if moves:  # Verificar si hay movimientos disponibles
             dr, dc = random.choice(moves)  # Seleccionar un movimiento aleatorio
@@ -216,8 +212,10 @@ def state_to_matrix(listaImagenesCopia):
         for j in range(3):
             matrix[i][j] = listaImagenesCopia[i * 3 + j][1]
     return matrix
-
-
+print("LISTA IMAGENES COPIA: ")
+print(listaImagenesCopia)
+print("MATRIZ RESULTANTE: ")
+print(state_to_matrix(listaImagenesCopia))
 def is_goal(state):
     final_state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
     return state == final_state
