@@ -2,7 +2,6 @@ from tkinter import *
 from collections import deque
 from queue import PriorityQueue
 import random
-FINAL_STATE = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 t=Tk() 
 t.overrideredirect(1)
 from win32api import GetSystemMetrics 
@@ -36,7 +35,9 @@ for i in range(3):
         Lab[cmp].bind("<Button-1>",lambda event,h=cmp:lol(event,h)) 
         Lab[cmp].place(x=2,y=2,width=196,height=196) 
         listaFrames[cmp].place(x=j*200,y=i*200,width=200,height=200) 
-        cmp+=1 
+        cmp+=1
+
+FINAL_STATE = listaImagenes
 index=8 
 from threading import Thread 
 def lol(event,h): 
@@ -53,8 +54,7 @@ def lol(event,h):
         Lab[h].config(bg="#3b53a0") #Nueva celda clicada
         Lab[index].config(bg="#242424") #Nueva celda vacia
         #matriz = state_to_matrix(listaImagenesCopia)
-        print("ESTADO FINAL: ")
-        print(listaImagenesCopia)
+    
         k=0 
         for i in range(len(listaImagenesCopia)): 
             if listaImagenesCopia[i][1]==listaImagenes[i][1]: #Comparamos 1 a 1 los identificadores de las dos listas
@@ -149,8 +149,10 @@ t.protocol("WM_DELETE_WINDOW", f)
 def cos(event): 
     global listaImagenesCopia,Lab,b 
     if event: 
-        shuffle(listaImagenesCopia) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
+        listaImagenesCopia = generate_initial_state() #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
     #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
+        print("LISTA IMAGENES COPIA: ")
+        print(listaImagenesCopia)
         print(state_to_matrix(listaImagenesCopia))
     for i in range(len(listaImagenesCopia)): 
         Lab[i].config(image=listaImagenesCopia[i][0]) 
@@ -197,7 +199,9 @@ def generate_initial_state():
         if moves:  # Verificar si hay movimientos disponibles
             dr, dc = random.choice(moves)  # Seleccionar un movimiento aleatorio
             new_row, new_col = empty_row + dr, empty_col + dc
+            #ERROR: index out of range, queda por solucionar
             initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
+            
             empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
         else:
             break  # Si no hay movimientos disponibles, detener el bucle
@@ -212,10 +216,11 @@ def state_to_matrix(listaImagenesCopia):
         for j in range(3):
             matrix[i][j] = listaImagenesCopia[i * 3 + j][1]
     return matrix
-print("LISTA IMAGENES COPIA: ")
-print(listaImagenesCopia)
-print("MATRIZ RESULTANTE: ")
-print(state_to_matrix(listaImagenesCopia))
+# print("LISTA IMAGENES COPIA: ")
+# print(listaImagenesCopia)
+# print("MATRIZ RESULTANTE: ")
+# print(state_to_matrix(listaImagenesCopia))
+
 def is_goal(state):
     final_state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
     return state == final_state
