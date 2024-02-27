@@ -11,7 +11,8 @@ t.iconbitmap("Icons/w.ico")
 t.title((" "*80)+"Sliding puzzle") 
 t.resizable(0,0) 
 f=Frame(t,bg="#000") 
-f.place(x=0,y=0,width=600,height=600) 
+f.place(x=0,y=0,width=600,height=600)
+FINAL_STATE = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 listaFrames=[] #Almacenamos los Frames que representan cada celda del rompecabezas
 listaImagenes=[] #Lista de imagenes del rompecabezas, almacena las  imagenes que representa cada celda del rompecabezas
 listaImagenesCopia=[] #Copia de la lista anterior para que cada vez que manipulemos el orden de las imagenes al deslizar tener un
@@ -53,7 +54,15 @@ def lol(event,h):
         Lab[index].config(image="") 
         Lab[h].config(bg="#3b53a0") #Nueva celda clicada
         Lab[index].config(bg="#242424") #Nueva celda vacia
-        #matriz = state_to_matrix(listaImagenesCopia)
+        matriz = state_to_matrix(listaImagenesCopia)
+        print("Estado inicial: ")
+        listaPrueba = []
+        for e in range(len(listaImagenesCopia)):
+            listaPrueba.append(listaImagenesCopia[e][1])
+        estado_inicial = generate_initial_state(listaPrueba)
+        print(estado_inicial)
+        # print("SOLUCION: ")
+        # print(solve_puzzle_a_star(matriz))
     
         k=0 
         for i in range(len(listaImagenesCopia)): 
@@ -97,9 +106,7 @@ restart.bind("<Enter>",lambda event:restart.config(image=iimw))
 restart.bind("<Leave>",lambda event:restart.config(image=iim))
 #Con el comando enter y leave dentro del bind lo que hacemos esque cuando el cursor entra en la imagen se selecciona
 #la imagen iimw y cuando sale se selecciona la imagen iim, asi creamos un efecto de hover sobre la imagen.
-_a89=ImageTk.PhotoImage((Image.open("Images/a89.png"))) 
-a89=Label(t,image=_a89) 
-a89.place(x=600,y=600,width=50,height=50) 
+ 
 from tkinter import messagebox 
 from tkinter import filedialog 
 cti=ImageTk.PhotoImage((Image.open("Images/changetheimage.png"))) 
@@ -149,7 +156,8 @@ t.protocol("WM_DELETE_WINDOW", f)
 def cos(event): 
     global listaImagenesCopia,Lab,b 
     if event: 
-        listaImagenesCopia = generate_initial_state() #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
+        #shuffle(listaImagenesCopia)
+        listaImagenesCopia = generate_initial_state(FINAL_STATE) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
     #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
         print("LISTA IMAGENES COPIA: ")
         print(listaImagenesCopia)
@@ -183,29 +191,55 @@ restart.bind("<Button-1>",cos)
         initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
         empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
     return initial_state'''
-def generate_initial_state():
-    initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
-    empty_row, empty_col = 2, 2  # Posición inicial de la casilla vacía (15)
-    for _ in range(200):  # Realizar 1000 movimientos aleatorios
-        moves = []
-        if empty_row > 0:
-            moves.append((-1, 0))  # Mover hacia arriba
-        if empty_row < 2:
-            moves.append((1, 0))  # Mover hacia abajo
-        if empty_col > 0:
-            moves.append((0, -1))  # Mover hacia la izquierda
-        if empty_col < 2:
-            moves.append((0, 1))  # Mover hacia la derecha
-        if moves:  # Verificar si hay movimientos disponibles
-            dr, dc = random.choice(moves)  # Seleccionar un movimiento aleatorio
-            new_row, new_col = empty_row + dr, empty_col + dc
-            #ERROR: index out of range, queda por solucionar
-            initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
+# def generate_initial_state():
+#     initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
+#     empty_row, empty_col = 2, 2  # Posición inicial de la casilla vacía (15)
+#     for _ in range(200):  # Realizar 1000 movimientos aleatorios
+#         moves = []
+#         if empty_row > 0:
+#             moves.append((-1, 0))  # Mover hacia arriba
+#         if empty_row < 2:
+#             moves.append((1, 0))  # Mover hacia abajo
+#         if empty_col > 0:
+#             moves.append((0, -1))  # Mover hacia la izquierda
+#         if empty_col < 2:
+#             moves.append((0, 1))  # Mover hacia la derecha
+#         if moves:  # Verificar si hay movimientos disponibles
+#             dr, dc = random.choice(moves)  # Seleccionar un movimiento aleatorio
+#             new_row, new_col = empty_row + dr, empty_col + dc
+#             #ERROR: index out of range, queda por solucionar
+#             initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
             
-            empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
-        else:
-            break  # Si no hay movimientos disponibles, detener el bucle
-    return initial_state
+#             empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
+#         else:
+#             break  # Si no hay movimientos disponibles, detener el bucle
+#     return initial_state
+
+def generate_initial_state(final_state):
+    current_state = final_state[:]  # Copiar el estado final para modificarlo
+    empty_index = current_state.index(8)  # Encontrar el índice del espacio vacío
+    
+    for _ in range(100):  # Realizar 100 movimientos inversos aleatorios
+        moves = []
+        if empty_index // 3 > 0:
+            moves.append(-3)  # Mover hacia arriba
+        if empty_index // 3 < 2:
+            moves.append(3)  # Mover hacia abajo
+        if empty_index % 3 > 0:
+            moves.append(-1)  # Mover hacia la izquierda
+        if empty_index % 3 < 2:
+            moves.append(1)  # Mover hacia la derecha
+        
+        move = random.choice(moves)  # Seleccionar un movimiento aleatorio
+        
+        # Calcular el nuevo índice del espacio vacío después del movimiento
+        new_index = empty_index + move
+        # Intercambiar el espacio vacío con la pieza adyacente seleccionada
+        current_state[empty_index], current_state[new_index] = current_state[new_index], current_state[empty_index]
+        # Actualizar el índice del espacio vacío
+        empty_index = new_index
+    
+    return current_state
 
 
 
