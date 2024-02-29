@@ -54,13 +54,16 @@ def lol(event,h):
         Lab[index].config(image="") 
         Lab[h].config(bg="#3b53a0") #Nueva celda clicada
         Lab[index].config(bg="#242424") #Nueva celda vacia
+        print("Estado actual: ")
+        print(state_to_matrix(listaImagenesCopia))
         matriz = state_to_matrix(listaImagenesCopia)
-        print("Estado inicial: ")
+        # print("Pasos hasta la solución: ")
+        # print(solve_puzzle_a_star([[6, 8, 5], [7, 0, 2], [3, 4, 1]]))
         listaPrueba = []
         for e in range(len(listaImagenesCopia)):
             listaPrueba.append(listaImagenesCopia[e][1])
-        estado_inicial = generate_initial_state(listaPrueba)
-        print(estado_inicial)
+        # estado_inicial = generate_initial_state(listaPrueba)
+        # print(estado_inicial)
         # print("SOLUCION: ")
         # print(solve_puzzle_a_star(matriz))
     
@@ -156,12 +159,12 @@ t.protocol("WM_DELETE_WINDOW", f)
 def cos(event): 
     global listaImagenesCopia,Lab,b 
     if event: 
-        #shuffle(listaImagenesCopia)
-        listaImagenesCopia = generate_initial_state(FINAL_STATE) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
+        shuffle(listaImagenesCopia)
+        #listaImagenesCopia = generate_initial_state(FINAL_STATE) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
     #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
-        print("LISTA IMAGENES COPIA: ")
-        print(listaImagenesCopia)
-        print(state_to_matrix(listaImagenesCopia))
+        # print("LISTA IMAGENES COPIA: ")
+        # print(listaImagenesCopia)
+        # print(state_to_matrix(listaImagenesCopia))
     for i in range(len(listaImagenesCopia)): 
         Lab[i].config(image=listaImagenesCopia[i][0]) 
         Lab[i].config(bg="#3b53a0") 
@@ -306,7 +309,7 @@ def solve_puzzle_a_star(initial_state):
     visited = set()
     pq = PriorityQueue()
     steps_taken = 0
-    max_steps = 10000
+    max_steps = 10000000000
     pq.put((0, 0, initial_state))  # Tupla: (costo acumulado, pasos restantes, estado actual)
     while not pq.empty() and steps_taken < max_steps:
         cost, steps, state = pq.get()
