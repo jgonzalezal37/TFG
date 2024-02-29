@@ -57,8 +57,8 @@ def lol(event,h):
         print("Estado actual: ")
         print(state_to_matrix(listaImagenesCopia))
         matriz = state_to_matrix(listaImagenesCopia)
-        # print("Pasos hasta la solución: ")
-        # print(solve_puzzle_a_star([[6, 8, 5], [7, 0, 2], [3, 4, 1]]))
+        print("Pasos hasta la solución: ")
+        print(solve_puzzle_a_star(matriz))
         listaPrueba = []
         for e in range(len(listaImagenesCopia)):
             listaPrueba.append(listaImagenesCopia[e][1])
@@ -159,7 +159,8 @@ t.protocol("WM_DELETE_WINDOW", f)
 def cos(event): 
     global listaImagenesCopia,Lab,b 
     if event: 
-        shuffle(listaImagenesCopia)
+        #shuffle(listaImagenesCopia)
+        listaImagenesCopia = apply_random_moves(listaImagenesCopia)
         #listaImagenesCopia = generate_initial_state(FINAL_STATE) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
     #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
         # print("LISTA IMAGENES COPIA: ")
@@ -242,6 +243,25 @@ def generate_initial_state(final_state):
         # Actualizar el índice del espacio vacío
         empty_index = new_index
     
+    return current_state
+
+def apply_random_moves(current_state):
+    """
+    Realiza 20 movimientos aleatorios en el juego utilizando la función lol.
+
+    Parameters:
+        current_state (list): El estado actual del juego representado como una lista.
+
+    Returns:
+        list: El estado actualizado del juego después de realizar los movimientos aleatorios.
+    """
+    for _ in range(100):
+        # Selecciona una celda aleatoria para realizar un movimiento
+        cell = random.randint(0, 8)
+        # Simula un clic en la celda seleccionada
+        lol(None, cell)
+    
+    # Devuelve el estado actualizado después de los movimientos aleatorios
     return current_state
 
 
