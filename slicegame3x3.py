@@ -109,7 +109,9 @@ restart.bind("<Enter>",lambda event:restart.config(image=iimw))
 restart.bind("<Leave>",lambda event:restart.config(image=iim))
 #Con el comando enter y leave dentro del bind lo que hacemos esque cuando el cursor entra en la imagen se selecciona
 #la imagen iimw y cuando sale se selecciona la imagen iim, asi creamos un efecto de hover sobre la imagen.
- 
+# _a89=ImageTk.PhotoImage((Image.open("Images/a89.png"))) 
+# a89=Label(t,image=_a89) 
+# a89.place(x=600,y=600,width=50,height=50) 
 from tkinter import messagebox 
 from tkinter import filedialog 
 cti=ImageTk.PhotoImage((Image.open("Images/changetheimage.png"))) 
