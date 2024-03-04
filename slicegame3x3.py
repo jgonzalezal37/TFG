@@ -116,7 +116,12 @@ logo.place(x=600,y=600,width=50,height=50)
 def ayuda(event):
     matriz = state_to_matrix(listaImagenesCopia)
     pasos = solve_puzzle_a_star(matriz)
-    messagebox.askokcancel("", "Estás a "+ str(pasos)+ " de llegar a la solución.")
+    if pasos == 1:
+        messagebox.askokcancel("", "Estás a un paso de llegar a la solución.")
+    elif pasos == 0:
+        messagebox.askokcancel("", "¡Has llegado a la solución!")
+    else:
+        messagebox.askokcancel("", "Estás a "+ str(pasos)+ " pasos de llegar a la solución.")
     #messagebox.askokcancel("", "estas a ")
 logo.bind("<Button-1>",ayuda)
 from tkinter import messagebox 
