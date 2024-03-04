@@ -109,9 +109,16 @@ restart.bind("<Enter>",lambda event:restart.config(image=iimw))
 restart.bind("<Leave>",lambda event:restart.config(image=iim))
 #Con el comando enter y leave dentro del bind lo que hacemos esque cuando el cursor entra en la imagen se selecciona
 #la imagen iimw y cuando sale se selecciona la imagen iim, asi creamos un efecto de hover sobre la imagen.
-_a89=ImageTk.PhotoImage((Image.open("Images/A.png"))) 
-a89=Label(t,image=_a89) 
-a89.place(x=600,y=600,width=50,height=50) 
+_logo=ImageTk.PhotoImage((Image.open("Images/A.png"))) 
+logo=Label(t,image=_logo) 
+logo.place(x=600,y=600,width=50,height=50)
+ 
+def ayuda(event):
+    matriz = state_to_matrix(listaImagenesCopia)
+    pasos = solve_puzzle_a_star(matriz)
+    messagebox.askokcancel("", "Estás a "+ str(pasos)+ " de llegar a la solución.")
+    #messagebox.askokcancel("", "estas a ")
+logo.bind("<Button-1>",ayuda)
 from tkinter import messagebox 
 from tkinter import filedialog 
 cti=ImageTk.PhotoImage((Image.open("Images/cambIMG1.png"))) 
@@ -162,6 +169,7 @@ def cos(event):
     global listaImagenesCopia,Lab,b 
     if event: 
         #shuffle(listaImagenesCopia)
+        listaImagenesCopia = apply_random_moves(listaImagenesCopia)
         listaImagenesCopia = apply_random_moves(listaImagenesCopia)
         #listaImagenesCopia = generate_initial_state(FINAL_STATE) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
     #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
