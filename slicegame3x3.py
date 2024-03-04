@@ -260,7 +260,7 @@ def generate_initial_state(final_state):
 
 def apply_random_moves(current_state):
     """
-    Realiza 20 movimientos aleatorios en el juego utilizando la función lol.
+    Realiza 100 movimientos aleatorios en el juego utilizando la función lol.
 
     Parameters:
         current_state (list): El estado actual del juego representado como una lista.
@@ -324,20 +324,22 @@ def generate_successors(state):
             new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]  # Intercambiar casillas
             successors.append(new_state)
     return successors
+#METODO BACKTRACKING
 
-def solve_puzzle(initial_state):
-    visited = set()
-    queue = deque([(initial_state, [])])  # Cola de tuplas: (estado actual, lista de movimientos)
-    while queue:
-        state, path = queue.popleft()
-        if is_goal(state):
-            return len(path)
-        if tuple(map(tuple, state)) not in visited:
-            visited.add(tuple(map(tuple, state)))  # Convertir lista de listas a tupla para hashable
-            for successor in generate_successors(state):
-                queue.append((successor, path + [successor]))
-    return None
+# def solve_puzzle(initial_state):
+#     visited = set()
+#     queue = deque([(initial_state, [])])  # Cola de tuplas: (estado actual, lista de movimientos)
+#     while queue:
+#         state, path = queue.popleft()
+#         if is_goal(state):
+#             return len(path)
+#         if tuple(map(tuple, state)) not in visited:
+#             visited.add(tuple(map(tuple, state)))  # Convertir lista de listas a tupla para hashable
+#             for successor in generate_successors(state):
+#                 queue.append((successor, path + [successor]))
+#     return None
 
+#METODO A ESTRELLA (ACTUALMENTE EN USO)
 def solve_puzzle_a_star(initial_state):
     # Conjunto para almacenar los estados visitados
     visited = set()
