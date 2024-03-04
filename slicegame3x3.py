@@ -109,7 +109,7 @@ restart.bind("<Enter>",lambda event:restart.config(image=iimw))
 restart.bind("<Leave>",lambda event:restart.config(image=iim))
 #Con el comando enter y leave dentro del bind lo que hacemos esque cuando el cursor entra en la imagen se selecciona
 #la imagen iimw y cuando sale se selecciona la imagen iim, asi creamos un efecto de hover sobre la imagen.
-_logo=ImageTk.PhotoImage((Image.open("Images/A.png"))) 
+_logo=ImageTk.PhotoImage((Image.open("Images/ayuda.png"))) 
 logo=Label(t,image=_logo) 
 logo.place(x=600,y=600,width=50,height=50)
  
