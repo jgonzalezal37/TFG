@@ -81,8 +81,8 @@ def lol(event,h):
     index=h 
     listaFrames[h].config(bg="black")
     
-yw=ImageTk.PhotoImage((Image.open("Images/youwin.png"))) 
-yww=ImageTk.PhotoImage((Image.open("Images/youwinwhite.png"))) 
+yw=ImageTk.PhotoImage((Image.open("Images/ganador1.png"))) 
+yww=ImageTk.PhotoImage((Image.open("Images/ganador2.png"))) 
 youwin=Label(t,image=yw) 
 from time import sleep 
 def tim(youwin): 
@@ -101,21 +101,21 @@ def tim(youwin):
                 return 
         except: 
             return 
-iim=ImageTk.PhotoImage((Image.open("Images/restart.png"))) 
-iimw=ImageTk.PhotoImage((Image.open("Images/restartwhite.png"))) 
+iim=ImageTk.PhotoImage((Image.open("Images/GameOn.png"))) 
+iimw=ImageTk.PhotoImage((Image.open("Images/GameOn.png"))) 
 restart=Label(t,image=iim) 
 restart.place(x=600,y=0,width=50,height=600) 
 restart.bind("<Enter>",lambda event:restart.config(image=iimw)) 
 restart.bind("<Leave>",lambda event:restart.config(image=iim))
 #Con el comando enter y leave dentro del bind lo que hacemos esque cuando el cursor entra en la imagen se selecciona
 #la imagen iimw y cuando sale se selecciona la imagen iim, asi creamos un efecto de hover sobre la imagen.
-# _a89=ImageTk.PhotoImage((Image.open("Images/a89.png"))) 
-# a89=Label(t,image=_a89) 
-# a89.place(x=600,y=600,width=50,height=50) 
+_a89=ImageTk.PhotoImage((Image.open("Images/A.png"))) 
+a89=Label(t,image=_a89) 
+a89.place(x=600,y=600,width=50,height=50) 
 from tkinter import messagebox 
 from tkinter import filedialog 
-cti=ImageTk.PhotoImage((Image.open("Images/changetheimage.png"))) 
-ctiw=ImageTk.PhotoImage((Image.open("Images/changetheimagewhite.png"))) 
+cti=ImageTk.PhotoImage((Image.open("Images/cambIMG1.png"))) 
+ctiw=ImageTk.PhotoImage((Image.open("Images/cambIMG2.png"))) 
 changetheimage=Label(t,image=cti) 
 changetheimage.place(x=0,y=600,width=600,height=50) 
 changetheimage.bind("<Enter>",lambda event:changetheimage.config(image=ctiw)) 
