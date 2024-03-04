@@ -221,6 +221,7 @@ restart.bind("<Button-1>",cos)
 #             break  # Si no hay movimientos disponibles, detener el bucle
 #     return initial_state
 
+'''
 def generate_initial_state(final_state):
     current_state = final_state[:]  # Copiar el estado final para modificarlo
     empty_index = current_state.index(8)  # Encontrar el índice del espacio vacío
@@ -246,6 +247,8 @@ def generate_initial_state(final_state):
         empty_index = new_index
     
     return current_state
+'''
+
 
 def apply_random_moves(current_state):
     """
@@ -290,9 +293,9 @@ def heuristic(state):
     for i in range(3):
         for j in range(3):
             if state[i][j] != 0:
-                row = (state[i][j] - 1) // 3
-                col = (state[i][j] - 1) % 3
-                total_cost += abs(i - row) + abs(j - col)
+                row = (state[i][j] - 1) // 3 # (fila 0, 1 o 2) Calcular fila objetivo
+                col = (state[i][j] - 1) % 3 # (resto 0, 1 o 2) Calcular columna objetivo
+                total_cost += abs(i - row) + abs(j - col) # Sumamos la distancia desde (i,j) hasta (row,col)
     return total_cost
 
 
@@ -328,23 +331,47 @@ def solve_puzzle(initial_state):
     return None
 
 def solve_puzzle_a_star(initial_state):
+    # Conjunto para almacenar los estados visitados
     visited = set()
+    # Cola de prioridad para almacenar los estados por explorar
     pq = PriorityQueue()
+    # Contador de pasos tomados
     steps_taken = 0
+    # Número máximo de pasos permitidos
     max_steps = 10000000000
+    
+    # Agregar el estado inicial a la cola de prioridad
     pq.put((0, 0, initial_state))  # Tupla: (costo acumulado, pasos restantes, estado actual)
+    
+    # Bucle principal
     while not pq.empty() and steps_taken < max_steps:
+        # Obtener el estado con menor costo de la cola de prioridad
         cost, steps, state = pq.get()
+        
+        # Comprobar si se ha alcanzado el estado objetivo
         if state == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]:
-            return steps
+            return steps  # Devolver el número de pasos tomados
+        
+        # Comprobar si el estado no ha sido visitado previamente
         if tuple(map(tuple, state)) not in visited:
+            # Agregar el estado actual al conjunto de estados visitados
             visited.add(tuple(map(tuple, state)))
+            
+            # Generar sucesores del estado actual
             for successor in generate_successors(state):
+                # Calcular la heurística para el sucesor
                 h = heuristic(successor)
+                # Calcular el costo acumulado para el sucesor
                 g = cost + 1  # Incrementar el costo acumulado
+                # Calcular la función de evaluación f(n) = g(n) + h(n)
                 f = g + h
+                # Agregar el sucesor a la cola de prioridad con su costo acumulado y pasos restantes
                 pq.put((g, steps + 1, successor))
-        steps_taken += 1    
+        
+        # Incrementar el contador de pasos tomados
+        steps_taken += 1
+    
+    # Si se excede el número máximo de pasos permitidos o la cola de prioridad está vacía, retornar None
     return None
 
 #def get_successors(state):
