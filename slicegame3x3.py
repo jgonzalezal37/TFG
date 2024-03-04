@@ -7,7 +7,7 @@ t.overrideredirect(1)
 from win32api import GetSystemMetrics 
 t.geometry(f"650x675+{int(GetSystemMetrics(0)/2)-325}+40") 
 t.config(bg="#3b53a0") 
-t.iconbitmap("Icons/w.ico") 
+t.iconbitmap("Icons/A.ico") 
 t.title((" "*80)+"Sliding puzzle") 
 t.resizable(0,0) 
 f=Frame(t,bg="#000") 
