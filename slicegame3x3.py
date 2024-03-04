@@ -102,7 +102,7 @@ def tim(youwin):
         except: 
             return 
 iim=ImageTk.PhotoImage((Image.open("Images/GameOn.png"))) 
-iimw=ImageTk.PhotoImage((Image.open("Images/GameOn.png"))) 
+iimw=ImageTk.PhotoImage((Image.open("Images/GameOn2.png"))) 
 restart=Label(t,image=iim) 
 restart.place(x=600,y=0,width=50,height=600) 
 restart.bind("<Enter>",lambda event:restart.config(image=iimw)) 
