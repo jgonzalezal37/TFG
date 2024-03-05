@@ -389,26 +389,26 @@ def solve_puzzle_a_star(initial_state):
     # Si se excede el número máximo de pasos permitidos o la cola de prioridad está vacía, retornar None
     return None
 
-#def get_successors(state):
-    # Generar los sucesores del estado actual intercambiando la posición de la pieza vacía con sus vecinos
-    successors = []
-    empty_row, empty_col = find_empty(state)
+# def get_successors(state):
+#       #Generar los sucesores del estado actual intercambiando la posición de la pieza vacía con sus vecinos
+#     successors = []
+#     empty_row, empty_col = find_empty(state)
     
-    for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-        new_row, new_col = empty_row + dr, empty_col + dc
-        if 0 <= new_row < 4 and 0 <= new_col < 4:
-            new_state = [row[:] for row in state]  # Copiar el estado actual
-            new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]
-            successors.append(new_state)
+#     for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+#         new_row, new_col = empty_row + dr, empty_col + dc
+#         if 0 <= new_row < 4 and 0 <= new_col < 4:
+#             new_state = [row[:] for row in state]  # Copiar el estado actual
+#             new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]
+#             successors.append(new_state)
     
-    return successors
+#     return successors
 
-#def find_empty(state):
-    # Encuentra la posición de la pieza vacía en el estado actual
-    for i in range(4):
-        for j in range(4):
-            if state[i][j] == 15:
-                return i, j
+# def find_empty(state):
+#     # Encuentra la posición de la pieza vacía en el estado actual
+#     for i in range(4):
+#         for j in range(4):
+#             if state[i][j] == 15:
+#                 return i, j
 
 introf=Frame(t) 
 introf.place(x=0,y=0,width=650,height=650) 
