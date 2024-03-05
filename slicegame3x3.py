@@ -381,7 +381,7 @@ def solve_puzzle_a_star(initial_state):
                 # Calcular la función de evaluación f(n) = g(n) + h(n)
                 f = g + h
                 # Agregar el sucesor a la cola de prioridad con su costo acumulado y pasos restantes
-                pq.put((g, steps + 1, successor))
+                pq.put((f, steps + 1, successor))
         
         # Incrementar el contador de pasos tomados
         steps_taken += 1
