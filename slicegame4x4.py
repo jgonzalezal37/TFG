@@ -13,7 +13,7 @@ t.title((" "*80)+"Sliding puzzle")
 t.resizable(0,0) 
 f=Frame(t,bg="#000") 
 f.place(x=0,y=0,width=600,height=600)
-FINAL_STATE = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+FINAL_STATE = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 listaFrames=[] #Almacenamos los Frames que representan cada celda del rompecabezas
 listaImagenes=[] #Lista de imagenes del rompecabezas, almacena las  imagenes que representa cada celda del rompecabezas
 listaImagenesCopia=[] #Copia de la lista anterior para que cada vez que manipulemos el orden de las imagenes al deslizar tener un
@@ -22,30 +22,30 @@ Lab=[] #Muestra graficamente las imagenes del rompezabezas usando la libreria tk
 cmp=0 #Contador que lleva el numero de piezas creadas en el rompecabezas
 from PIL import Image,ImageTk 
 path="Images/m.png" 
-for i in range(3): 
-    for j in range(3): 
+for i in range(4): 
+    for j in range(4): 
         listaFrames.append(Frame(f)) 
-        if i==2 and j==2: 
+        if i==3 and j==3: 
             Lab.append(Label(listaFrames[cmp],background="#242424")) 
             listaImagenes.append(["",cmp]) 
             listaImagenesCopia.append(["",cmp]) 
         else: 
-            listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
-            listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp])
+            listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
+            listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp])
             #Con .crop dividimos la imagen en las partes que queramos
             Lab.append(Label(listaFrames[cmp],image=listaImagenes[cmp][0],background="#3b53a0")) 
         Lab[cmp].bind("<Button-1>",lambda event,h=cmp:lol(event,h)) 
-        Lab[cmp].place(x=2,y=2,width=196,height=196) 
-        listaFrames[cmp].place(x=j*200,y=i*200,width=200,height=200) 
+        Lab[cmp].place(x=3,y=3,width=144,height=144) 
+        listaFrames[cmp].place(x=j*150,y=i*150,width=150,height=150) 
         cmp+=1
 
 FINAL_STATE = listaImagenes
-index=8 
+index=15 
 from threading import Thread 
 def lol(event,h): 
     #h es el numero de la pieza que fue clicada.
     global index,t,b 
-    if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+3==index or h-3==index) : 
+    if Lab[h].cget("bg")=="#242424" and (h-1==index or h+1==index or h+4==index or h-4==index) : 
         Lab[h].config(image=listaImagenesCopia[index][0]) 
         ih=listaImagenesCopia[h][1]
         listaImagenesCopia[h]=[listaImagenesCopia[index][0],listaImagenesCopia[index][1]] #Intercambia el valor de las dos celdas
@@ -116,7 +116,7 @@ logo.place(x=600,y=600,width=50,height=50)
  
 def ayuda(event):
     matriz = state_to_matrix(listaImagenesCopia)
-    pasos = solve_puzzle_a_star(matriz)
+    pasos = solve_puzzle_bfs(matriz)
     if pasos == 1:
         messagebox.askokcancel("", "Estás a un paso de llegar a la solución.")
     elif pasos == 0:
@@ -151,14 +151,14 @@ def cticlick(event):
             listaImagenesCopia.clear() 
             t.title((" "*60)+"Sliding puzzle | The image is loading ...") 
             cmp=0 
-            for i in range(3): 
-                for j in range(3): 
-                    if i==2 and j==2: 
+            for i in range(4): 
+                for j in range(4): 
+                    if i==3 and j==3: 
                         listaImagenes.append(["",cmp]) 
                         listaImagenesCopia.append(["",cmp]) 
                     else: 
-                        listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
-                        listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
+                        listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
+                        listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
                     cmp+=1
             cos(None)
     t.title((" "*80)+"Sliding puzzle") 
@@ -177,11 +177,7 @@ def cos(event):
         #shuffle(listaImagenesCopia)
         listaImagenesCopia = apply_random_moves(listaImagenesCopia)
         listaImagenesCopia = apply_random_moves(listaImagenesCopia)
-        #listaImagenesCopia = generate_initial_state(FINAL_STATE) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
-    #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
-        # print("LISTA IMAGENES COPIA: ")
-        # print(listaImagenesCopia)
-        # print(state_to_matrix(listaImagenesCopia))
+        
     for i in range(len(listaImagenesCopia)): 
         Lab[i].config(image=listaImagenesCopia[i][0]) 
         Lab[i].config(bg="#3b53a0") 
@@ -192,76 +188,6 @@ def cos(event):
     youwin.place_forget() 
     changetheimage.place(x=0,y=600,width=600,height=50) 
 restart.bind("<Button-1>",cos) 
-#FALTA POR TERMINAR (actualmente general el estado inicial aleatoriamente con shuffle)
-'''def generate_initial_state():
-    initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
-    empty_row, empty_col = 3, 3  # Posición inicial de la casilla vacía (15)
-    for _ in range(300):  # Realizar 1000 movimientos aleatorios
-        moves = []
-        if empty_row > 0:
-            moves.append((-1, 0))  # Mover hacia arriba
-        if empty_row < 3:
-            moves.append((1, 0))  # Mover hacia abajo
-        if empty_col > 0:
-            moves.append((0, -1))  # Mover hacia la izquierda
-        if empty_col < 3:
-            moves.append((0, 1))  # Mover hacia la derecha
-        dr, dc = random.choice(moves)  # Seleccionar un movimiento aleatorio
-        new_row, new_col = empty_row + dr, empty_col + dc
-        initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
-        empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
-    return initial_state'''
-# def generate_initial_state():
-#     initial_state = [row[:] for row in FINAL_STATE]  # Copiar el estado final
-#     empty_row, empty_col = 2, 2  # Posición inicial de la casilla vacía (15)
-#     for _ in range(200):  # Realizar 1000 movimientos aleatorios
-#         moves = []
-#         if empty_row > 0:
-#             moves.append((-1, 0))  # Mover hacia arriba
-#         if empty_row < 2:
-#             moves.append((1, 0))  # Mover hacia abajo
-#         if empty_col > 0:
-#             moves.append((0, -1))  # Mover hacia la izquierda
-#         if empty_col < 2:
-#             moves.append((0, 1))  # Mover hacia la derecha
-#         if moves:  # Verificar si hay movimientos disponibles
-#             dr, dc = random.choice(moves)  # Seleccionar un movimiento aleatorio
-#             new_row, new_col = empty_row + dr, empty_col + dc
-#             #ERROR: index out of range, queda por solucionar
-#             initial_state[empty_row][empty_col], initial_state[new_row][new_col] = initial_state[new_row][new_col], initial_state[empty_row][empty_col]  # Intercambiar casillas
-            
-#             empty_row, empty_col = new_row, new_col  # Actualizar la posición de la casilla vacía
-#         else:
-#             break  # Si no hay movimientos disponibles, detener el bucle
-#     return initial_state
-
-'''
-def generate_initial_state(final_state):
-    current_state = final_state[:]  # Copiar el estado final para modificarlo
-    empty_index = current_state.index(8)  # Encontrar el índice del espacio vacío
-    
-    for _ in range(100):  # Realizar 100 movimientos inversos aleatorios
-        moves = []
-        if empty_index // 3 > 0:
-            moves.append(-3)  # Mover hacia arriba
-        if empty_index // 3 < 2:
-            moves.append(3)  # Mover hacia abajo
-        if empty_index % 3 > 0:
-            moves.append(-1)  # Mover hacia la izquierda
-        if empty_index % 3 < 2:
-            moves.append(1)  # Mover hacia la derecha
-        
-        move = random.choice(moves)  # Seleccionar un movimiento aleatorio
-        
-        # Calcular el nuevo índice del espacio vacío después del movimiento
-        new_index = empty_index + move
-        # Intercambiar el espacio vacío con la pieza adyacente seleccionada
-        current_state[empty_index], current_state[new_index] = current_state[new_index], current_state[empty_index]
-        # Actualizar el índice del espacio vacío
-        empty_index = new_index
-    
-    return current_state
-'''
 
 
 def apply_random_moves(current_state):
@@ -276,7 +202,7 @@ def apply_random_moves(current_state):
     """
     for _ in range(100):
         # Selecciona una celda aleatoria para realizar un movimiento
-        cell = random.randint(0, 8)
+        cell = random.randint(0, 15)
         # Simula un clic en la celda seleccionada
         lol(None, cell)
     
@@ -287,28 +213,25 @@ def apply_random_moves(current_state):
 
 def state_to_matrix(listaImagenesCopia):
     # Convertir listaImagenesCopia a una matriz de 4x4
-    matrix = [[0] * 3 for _ in range(3)]
-    for i in range(3):
-        for j in range(3):
-            matrix[i][j] = listaImagenesCopia[i * 3 + j][1]
+    matrix = [[0] * 4 for _ in range(4)]
+    for i in range(4):
+        for j in range(4):
+            matrix[i][j] = listaImagenesCopia[i * 4 + j][1]
     return matrix
-# print("LISTA IMAGENES COPIA: ")
-# print(listaImagenesCopia)
-# print("MATRIZ RESULTANTE: ")
-# print(state_to_matrix(listaImagenesCopia))
+
 
 def is_goal(state):
-    final_state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+    final_state = [[0, 1, 2, 3],[4, 5, 6, 7],[8, 9, 10, 11],[12, 13, 14, 15]]
     return state == final_state
 
 def heuristic(state):
-    goal_state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+    goal_state = [[0, 1, 2, 3],[4, 5, 6, 7],[8, 9, 10, 11],[12, 13, 14, 15]]
     total_cost = 0
-    for i in range(3):
-        for j in range(3):
+    for i in range(4):
+        for j in range(4):
             if state[i][j] != 0:
-                row = (state[i][j] - 1) // 3 # (fila 0, 1 o 2) Calcular fila objetivo
-                col = (state[i][j] - 1) % 3 # (resto 0, 1 o 2) Calcular columna objetivo
+                row = (state[i][j] - 1) // 4 # (fila 0, 1 o 2) Calcular fila objetivo
+                col = (state[i][j] - 1) % 4 # (resto 0, 1 o 2) Calcular columna objetivo
                 total_cost += abs(i - row) + abs(j - col) # Sumamos la distancia desde (i,j) hasta (row,col)
     return total_cost
 
@@ -317,78 +240,22 @@ def generate_successors(state):
     successors = []
     # Encontrar la posición de la casilla vacía
     empty_row, empty_col = -1, -1
-    for i in range(3):
-        for j in range(3):
-            if state[i][j] == 8:
+    for i in range(4):
+        for j in range(4):
+            if state[i][j] == 15:  # Modificar este valor si la casilla vacía tiene otro identificador
                 empty_row, empty_col = i, j
                 break
-    # Mover la casilla vacía hacia arriba, abajo, izquierda y derecha si es posible
-    for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+    # Definir las direcciones de los movimientos
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    # Mover la casilla vacía en todas las direcciones posibles
+    for dr, dc in directions:
         new_row, new_col = empty_row + dr, empty_col + dc
-        if 0 <= new_row < 3 and 0 <= new_col < 3:
+        if 0 <= new_row < 4 and 0 <= new_col < 4:
             new_state = [row[:] for row in state]  # Copiar el estado actual
             new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]  # Intercambiar casillas
             successors.append(new_state)
     return successors
-#METODO BACKTRACKING
 
-# def solve_puzzle(initial_state):
-#     visited = set()
-#     queue = deque([(initial_state, [])])  # Cola de tuplas: (estado actual, lista de movimientos)
-#     while queue:
-#         state, path = queue.popleft()
-#         if is_goal(state):
-#             return len(path)
-#         if tuple(map(tuple, state)) not in visited:
-#             visited.add(tuple(map(tuple, state)))  # Convertir lista de listas a tupla para hashable
-#             for successor in generate_successors(state):
-#                 queue.append((successor, path + [successor]))
-#     return None
-
-#METODO A ESTRELLA (ACTUALMENTE EN USO)
-def solve_puzzle_a_star(initial_state):
-    # Conjunto para almacenar los estados visitados
-    visited = set()
-    # Cola de prioridad para almacenar los estados por explorar
-    pq = PriorityQueue()
-    # Contador de pasos tomados
-    steps_taken = 0
-    # Número máximo de pasos permitidos
-    max_steps = 10000000000
-    
-    # Agregar el estado inicial a la cola de prioridad
-    pq.put((0, 0, initial_state))  # Tupla: (costo acumulado, pasos restantes, estado actual)
-    
-    # Bucle principal
-    while not pq.empty() and steps_taken < max_steps:
-        # Obtener el estado con menor costo de la cola de prioridad
-        cost, steps, state = pq.get()
-        
-        # Comprobar si se ha alcanzado el estado objetivo
-        if state == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]:
-            return steps  # Devolver el número de pasos tomados
-        
-        # Comprobar si el estado no ha sido visitado previamente
-        if tuple(map(tuple, state)) not in visited:
-            # Agregar el estado actual al conjunto de estados visitados
-            visited.add(tuple(map(tuple, state)))
-            
-            # Generar sucesores del estado actual
-            for successor in generate_successors(state):
-                # Calcular la heurística para el sucesor
-                h = heuristic(successor)
-                # Calcular el costo acumulado para el sucesor
-                g = cost + 1  # Incrementar el costo acumulado
-                # Calcular la función de evaluación f(n) = g(n) + h(n)
-                f = g + h
-                # Agregar el sucesor a la cola de prioridad con su costo acumulado y pasos restantes
-                pq.put((f, steps + 1, successor))
-                #pq (priority queue ordena sus elementos segun el primer elemento que se le pasa, en este caso f)
-        # Incrementar el contador de pasos tomados
-        steps_taken += 1
-    
-    # Si se excede el número máximo de pasos permitidos o la cola de prioridad está vacía, retornar None
-    return None
 
 #METODO BUSQUEDA EN ANCHURA
 
@@ -411,7 +278,7 @@ def solve_puzzle_bfs(initial_state):
         steps, state = q.get()
         
         # Comprobar si se ha alcanzado el estado objetivo
-        if state == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]:
+        if state == [[0, 1, 2, 3],[4, 5, 6, 7],[8, 9, 10, 11],[12, 13, 14, 15]]:
             return steps  # Devolver el número de pasos tomados
         
         # Comprobar si el estado no ha sido visitado previamente
@@ -430,26 +297,7 @@ def solve_puzzle_bfs(initial_state):
     # Si se excede el número máximo de pasos permitidos o la cola está vacía, retornar None
     return None
 
-# def get_successors(state):
-#       #Generar los sucesores del estado actual intercambiando la posición de la pieza vacía con sus vecinos
-#     successors = []
-#     empty_row, empty_col = find_empty(state)
-    
-#     for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-#         new_row, new_col = empty_row + dr, empty_col + dc
-#         if 0 <= new_row < 4 and 0 <= new_col < 4:
-#             new_state = [row[:] for row in state]  # Copiar el estado actual
-#             new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]
-#             successors.append(new_state)
-    
-#     return successors
 
-# def find_empty(state):
-#     # Encuentra la posición de la pieza vacía en el estado actual
-#     for i in range(4):
-#         for j in range(4):
-#             if state[i][j] == 15:
-#                 return i, j
 
 introf=Frame(t) 
 introf.place(x=0,y=0,width=650,height=650) 
