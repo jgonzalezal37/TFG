@@ -2,8 +2,8 @@ from tkinter import *
 from collections import deque
 from queue import PriorityQueue
 from queue import Queue
+from menu import *
 import random
-from menu import MenuApp
 t=Tk() 
 t.overrideredirect(1)
 from win32api import GetSystemMetrics 
@@ -12,6 +12,8 @@ t.config(bg="#3b53a0")
 t.iconbitmap("Icons/A.ico") 
 t.title((" "*80)+"Sliding puzzle") 
 t.resizable(0,0) 
+
+
 f=Frame(t,bg="#000") 
 f.place(x=0,y=0,width=600,height=600)
 FINAL_STATE = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
@@ -126,12 +128,10 @@ def ayuda(event):
         messagebox.askokcancel("", "Estás a "+ str(pasos)+ " pasos de llegar a la solución.")
     #messagebox.askokcancel("", "estas a ")
         
-def open_menu(event):
-    menu_window = Tk()
-    menu_window.title("Menú del juego")
-    menu_app = MenuApp(menu_window)
+def menu(event):
+    menu = MenuApp()
 #logo.bind("<Button-1>",ayuda)
-logo.bind("<Button-1>",open_menu)
+logo.bind("<Button-1>",menu)
 from tkinter import messagebox 
 from tkinter import filedialog 
 cti=ImageTk.PhotoImage((Image.open("Images/cambIMG1.png"))) 
@@ -303,8 +303,7 @@ def solve_puzzle_bfs(initial_state):
     
     # Si se excede el número máximo de pasos permitidos o la cola está vacía, retornar None
     return None
-
-
+  
 
 introf=Frame(t) 
 introf.place(x=0,y=0,width=650,height=650) 
