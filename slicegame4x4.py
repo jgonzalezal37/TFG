@@ -3,6 +3,7 @@ from collections import deque
 from queue import PriorityQueue
 from queue import Queue
 import random
+from menu import MenuApp
 t=Tk() 
 t.overrideredirect(1)
 from win32api import GetSystemMetrics 
@@ -124,7 +125,13 @@ def ayuda(event):
     else:
         messagebox.askokcancel("", "Estás a "+ str(pasos)+ " pasos de llegar a la solución.")
     #messagebox.askokcancel("", "estas a ")
-logo.bind("<Button-1>",ayuda)
+        
+def open_menu(event):
+    menu_window = Tk()
+    menu_window.title("Menú del juego")
+    menu_app = MenuApp(menu_window)
+#logo.bind("<Button-1>",ayuda)
+logo.bind("<Button-1>",open_menu)
 from tkinter import messagebox 
 from tkinter import filedialog 
 cti=ImageTk.PhotoImage((Image.open("Images/cambIMG1.png"))) 
