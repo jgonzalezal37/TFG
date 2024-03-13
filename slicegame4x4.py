@@ -62,7 +62,7 @@ def lol(event,h):
         print(state_to_matrix(listaImagenesCopia))
         matriz = state_to_matrix(listaImagenesCopia)
         print("Pasos hasta la solución: ")
-        print(solve_puzzle_bfs(matriz))
+        print(solve_puzzle_a_star(matriz))
         listaPrueba = []
         for e in range(len(listaImagenesCopia)):
             listaPrueba.append(listaImagenesCopia[e][1])
@@ -119,7 +119,7 @@ logo.place(x=600,y=600,width=50,height=50)
  
 def ayuda(event):
     matriz = state_to_matrix(listaImagenesCopia)
-    pasos = solve_puzzle_bfs(matriz)
+    pasos = solve_puzzle_a_star(matriz)
     if pasos == 1:
         messagebox.askokcancel("", "Estás a un paso de llegar a la solución.")
     elif pasos == 0:
@@ -182,8 +182,8 @@ def cos(event):
     global listaImagenesCopia,Lab,b 
     if event: 
         #shuffle(listaImagenesCopia)
-        listaImagenesCopia = apply_random_moves(listaImagenesCopia)
-        listaImagenesCopia = apply_random_moves(listaImagenesCopia)
+        listaImagenesCopia = apply_random_moves(listaImagenesCopia,5)
+        #listaImagenesCopia = apply_random_moves(listaImagenesCopia)
         
     for i in range(len(listaImagenesCopia)): 
         Lab[i].config(image=listaImagenesCopia[i][0]) 
@@ -197,24 +197,35 @@ def cos(event):
 restart.bind("<Button-1>",cos) 
 
 
-def apply_random_moves(current_state):
-    """
-    Realiza 100 movimientos aleatorios en el juego utilizando la función lol.
 
-    Parameters:
-        current_state (list): El estado actual del juego representado como una lista.
-
-    Returns:
-        list: El estado actualizado del juego después de realizar los movimientos aleatorios.
+def apply_random_moves(current_state, numero_pasos):
     """
-    for _ in range(100):
-        # Selecciona una celda aleatoria para realizar un movimiento
+    Aplica movimientos aleatorios al estado actual y devuelve un nuevo estado que se encuentra
+    a un cierto número de pasos de la solución.
+    """
+    # Aplicar movimientos aleatorios al estado actual
+    for _ in range(numero_pasos):
+        # Seleccionar una celda aleatoria para realizar un movimiento
         cell = random.randint(0, 15)
-        # Simula un clic en la celda seleccionada
+        # Simular un clic en la celda seleccionada
         lol(None, cell)
-    
-    # Devuelve el estado actualizado después de los movimientos aleatorios
+
+    # Calcular la cantidad de pasos necesarios para resolver el puzzle desde el estado actual
+    steps_to_solution = solve_puzzle_a_star(current_state)
+
+    # Si el estado actual está a una cantidad menor de pasos que el número de pasos deseado,
+    # aplicar movimientos adicionales para llegar a ese número de pasos
+    if steps_to_solution is not None and steps_to_solution < numero_pasos:
+        for _ in range(numero_pasos - steps_to_solution):
+            # Seleccionar una celda aleatoria para realizar un movimiento
+            cell = random.randint(0, 15)
+            # Simular un clic en la celda seleccionada
+            lol(None, cell)
+
+    # Devolver el estado actualizado después de los movimientos aleatorios
     return current_state
+
+
 
 
 
@@ -242,13 +253,55 @@ def heuristic(state):
                 total_cost += abs(i - row) + abs(j - col) # Sumamos la distancia desde (i,j) hasta (row,col)
     return total_cost
 
-
+def solve_puzzle_a_star(initial_state):
+    # Conjunto para almacenar los estados visitados
+    visited = set()
+    # Cola de prioridad para almacenar los estados por explorar
+    pq = PriorityQueue()
+    # Contador de pasos tomados
+    steps_taken = 0
+    # Número máximo de pasos permitidos
+    max_steps = 10000000000
+    
+    # Agregar el estado inicial a la cola de prioridad
+    pq.put((0, 0, initial_state))  # Tupla: (costo acumulado, pasos restantes, estado actual)
+    
+    # Bucle principal
+    while not pq.empty() and steps_taken < max_steps:
+        # Obtener el estado con menor costo de la cola de prioridad
+        cost, steps, state = pq.get()
+        
+        # Comprobar si se ha alcanzado el estado objetivo
+        if state == [[0, 1, 2, 3],[4, 5, 6, 7],[8, 9, 10, 11],[12, 13, 14, 15]]:
+            return steps  # Devolver el número de pasos tomados
+        
+        # Comprobar si el estado no ha sido visitado previamente
+        if tuple(map(tuple, state)) not in visited:
+            # Agregar el estado actual al conjunto de estados visitados
+            visited.add(tuple(map(tuple, state)))
+            
+            # Generar sucesores del estado actual
+            for successor in generate_successors(state):
+                # Calcular la heurística para el sucesor
+                h = heuristic(successor)
+                # Calcular el costo acumulado para el sucesor
+                g = cost + 1  # Incrementar el costo acumulado
+                # Calcular la función de evaluación f(n) = g(n) + h(n)
+                f = g + h
+                # Agregar el sucesor a la cola de prioridad con su costo acumulado y pasos restantes
+                pq.put((f, steps + 1, successor))
+                #pq (priority queue ordena sus elementos segun el primer elemento que se le pasa, en este caso f)
+        # Incrementar el contador de pasos tomados
+        steps_taken += 1
+    
+    # Si se excede el número máximo de pasos permitidos o la cola de prioridad está vacía, retornar None
+    return None
 def generate_successors(state):
     successors = []
     # Encontrar la posición de la casilla vacía
     empty_row, empty_col = -1, -1
-    for i in range(4):
-        for j in range(4):
+    for i in range(len(state)):
+        for j in range(len(state[i])):
             if state[i][j] == 15:  # Modificar este valor si la casilla vacía tiene otro identificador
                 empty_row, empty_col = i, j
                 break
