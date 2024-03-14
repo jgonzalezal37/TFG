@@ -134,6 +134,7 @@ changetheimage.place(x=0,y=600,width=600,height=50)
 changetheimage.bind("<Enter>",lambda event:changetheimage.config(image=ctiw)) 
 changetheimage.bind("<Leave>",lambda event:changetheimage.config(image=cti)) 
 from tkinter import simpledialog
+
 def cticlick(event): 
     filetypes = ( 
                 ('Images', '*.png'), 
@@ -144,14 +145,17 @@ def cticlick(event):
                             initialdir='/', 
                             filetypes=filetypes)
     #if e!=None: 
+
     if e is not None:
         img = Image.open(e.name)
         if img.width != img.height:
+            t.withdraw() #Oculta la ventana principal
             # Si las dimensiones no coinciden, abrir una ventana de vista previa y permitir al usuario ajustarlas
             new_width = simpledialog.askinteger("Adjust Image Dimensions", "Width (pixels):", initialvalue=img.width)
             new_height = simpledialog.askinteger("Adjust Image Dimensions", "Height (pixels):", initialvalue=img.height)
+            t.deiconify() #Muestra la ventana principal
             img = img.resize((new_width, new_height), Image.ANTIALIAS)
-            img.save(e.name)  # Guardar la imagen con las nuevas dimensiones  
+            #img.save(e.name)  # Guardar la imagen con las nuevas dimensiones  
         path=e.name 
         listaImagenes.clear() 
         listaImagenesCopia.clear() 
