@@ -139,7 +139,7 @@ def cticlick(event):
                 ('Images', '*.png'), 
                 ('All files', '*.png')
                 )
-    t.iconbitmap("Icons/image.ico") 
+    t.iconbitmap("Icons/A.ico") 
     e =filedialog.askopenfile(title='Open the image (with the same dimensions)', 
                             initialdir='/', 
                             filetypes=filetypes)
@@ -168,7 +168,7 @@ def cticlick(event):
                 cmp+=1
     cos(None)
     t.title((" "*80)+"Sliding puzzle") 
-    t.iconbitmap("Icons/w.ico") 
+    t.iconbitmap("Icons/A.ico") 
 changetheimage.bind("<Button-1>",cticlick) 
 from random import shuffle 
 b=False 
