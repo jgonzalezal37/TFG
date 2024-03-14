@@ -1,13 +1,14 @@
 from tkinter import * 
 from collections import deque
 from queue import PriorityQueue
+from queue import Queue
 import random
 t=Tk() 
 t.overrideredirect(1)
 from win32api import GetSystemMetrics 
 t.geometry(f"650x675+{int(GetSystemMetrics(0)/2)-325}+40") 
 t.config(bg="#3b53a0") 
-t.iconbitmap("Icons/w.ico") 
+t.iconbitmap("Icons/A.ico") 
 t.title((" "*80)+"Sliding puzzle") 
 t.resizable(0,0) 
 f=Frame(t,bg="#000") 
@@ -58,7 +59,7 @@ def lol(event,h):
         print(state_to_matrix(listaImagenesCopia))
         matriz = state_to_matrix(listaImagenesCopia)
         print("Pasos hasta la solución: ")
-        print(solve_puzzle_a_star(matriz))
+        print(solve_puzzle_bfs(matriz))
         listaPrueba = []
         for e in range(len(listaImagenesCopia)):
             listaPrueba.append(listaImagenesCopia[e][1])
@@ -81,8 +82,8 @@ def lol(event,h):
     index=h 
     listaFrames[h].config(bg="black")
     
-yw=ImageTk.PhotoImage((Image.open("Images/youwin.png"))) 
-yww=ImageTk.PhotoImage((Image.open("Images/youwinwhite.png"))) 
+yw=ImageTk.PhotoImage((Image.open("Images/ganador1.png"))) 
+yww=ImageTk.PhotoImage((Image.open("Images/ganador2.png"))) 
 youwin=Label(t,image=yw) 
 from time import sleep 
 def tim(youwin): 
@@ -101,53 +102,71 @@ def tim(youwin):
                 return 
         except: 
             return 
-iim=ImageTk.PhotoImage((Image.open("Images/restart.png"))) 
-iimw=ImageTk.PhotoImage((Image.open("Images/restartwhite.png"))) 
+iim=ImageTk.PhotoImage((Image.open("Images/GameOn.png"))) 
+iimw=ImageTk.PhotoImage((Image.open("Images/GameOn2.png"))) 
 restart=Label(t,image=iim) 
 restart.place(x=600,y=0,width=50,height=600) 
 restart.bind("<Enter>",lambda event:restart.config(image=iimw)) 
 restart.bind("<Leave>",lambda event:restart.config(image=iim))
 #Con el comando enter y leave dentro del bind lo que hacemos esque cuando el cursor entra en la imagen se selecciona
 #la imagen iimw y cuando sale se selecciona la imagen iim, asi creamos un efecto de hover sobre la imagen.
-# _a89=ImageTk.PhotoImage((Image.open("Images/a89.png"))) 
-# a89=Label(t,image=_a89) 
-# a89.place(x=600,y=600,width=50,height=50) 
+_logo=ImageTk.PhotoImage((Image.open("Images/ayuda.png"))) 
+logo=Label(t,image=_logo) 
+logo.place(x=600,y=600,width=50,height=50)
+ 
+def ayuda(event):
+    matriz = state_to_matrix(listaImagenesCopia)
+    pasos = solve_puzzle_a_star(matriz)
+    if pasos == 1:
+        messagebox.askokcancel("", "Estás a un paso de llegar a la solución.")
+    elif pasos == 0:
+        messagebox.askokcancel("", "¡Has llegado a la solución!")
+    else:
+        messagebox.askokcancel("", "Estás a "+ str(pasos)+ " pasos de llegar a la solución.")
+    #messagebox.askokcancel("", "estas a ")
+logo.bind("<Button-1>",ayuda)
 from tkinter import messagebox 
 from tkinter import filedialog 
-cti=ImageTk.PhotoImage((Image.open("Images/changetheimage.png"))) 
-ctiw=ImageTk.PhotoImage((Image.open("Images/changetheimagewhite.png"))) 
+cti=ImageTk.PhotoImage((Image.open("Images/cambIMG1.png"))) 
+ctiw=ImageTk.PhotoImage((Image.open("Images/cambIMG2.png"))) 
 changetheimage=Label(t,image=cti) 
 changetheimage.place(x=0,y=600,width=600,height=50) 
 changetheimage.bind("<Enter>",lambda event:changetheimage.config(image=ctiw)) 
 changetheimage.bind("<Leave>",lambda event:changetheimage.config(image=cti)) 
+from tkinter import simpledialog
 def cticlick(event): 
     filetypes = ( 
                 ('Images', '*.png'), 
-                ('All files', '*.png') 
+                ('All files', '*.png')
                 )
     t.iconbitmap("Icons/image.ico") 
     e =filedialog.askopenfile(title='Open the image (with the same dimensions)', 
                             initialdir='/', 
                             filetypes=filetypes)
-    if e!=None: 
-        if Image.open(e.name).width!=Image.open(e.name).height: 
-            messagebox.askokcancel("","The image need to has the same dimensions") 
-        else: 
-            path=e.name 
-            listaImagenes.clear() 
-            listaImagenesCopia.clear() 
-            t.title((" "*60)+"Sliding puzzle | The image is loading ...") 
-            cmp=0 
-            for i in range(3): 
-                for j in range(3): 
-                    if i==2 and j==2: 
+    #if e!=None: 
+    if e is not None:
+        img = Image.open(e.name)
+        if img.width != img.height:
+            # Si las dimensiones no coinciden, abrir una ventana de vista previa y permitir al usuario ajustarlas
+            new_width = simpledialog.askinteger("Adjust Image Dimensions", "Width (pixels):", initialvalue=img.width)
+            new_height = simpledialog.askinteger("Adjust Image Dimensions", "Height (pixels):", initialvalue=img.height)
+            img = img.resize((new_width, new_height), Image.ANTIALIAS)
+            img.save(e.name)  # Guardar la imagen con las nuevas dimensiones  
+        path=e.name 
+        listaImagenes.clear() 
+        listaImagenesCopia.clear() 
+        t.title((" "*60)+"Sliding puzzle | The image is loading ...") 
+        cmp=0 
+        for i in range(3): 
+            for j in range(3): 
+                if i==2 and j==2: 
                         listaImagenes.append(["",cmp]) 
                         listaImagenesCopia.append(["",cmp]) 
-                    else: 
+                else: 
                         listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
                         listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*200),(i*200),((j*200)+200),((i*200)+200)))),cmp]) 
-                    cmp+=1
-            cos(None)
+                cmp+=1
+    cos(None)
     t.title((" "*80)+"Sliding puzzle") 
     t.iconbitmap("Icons/w.ico") 
 changetheimage.bind("<Button-1>",cticlick) 
@@ -162,6 +181,7 @@ def cos(event):
     global listaImagenesCopia,Lab,b 
     if event: 
         #shuffle(listaImagenesCopia)
+        listaImagenesCopia = apply_random_moves(listaImagenesCopia)
         listaImagenesCopia = apply_random_moves(listaImagenesCopia)
         #listaImagenesCopia = generate_initial_state(FINAL_STATE) #Ahora mismo generamos el tablero de manera aleatoria con shuffle, tenemos que implementar
     #el algoritmo de backtracking y generar a partir de dicho algoritmo el tablero.
@@ -221,6 +241,7 @@ restart.bind("<Button-1>",cos)
 #             break  # Si no hay movimientos disponibles, detener el bucle
 #     return initial_state
 
+'''
 def generate_initial_state(final_state):
     current_state = final_state[:]  # Copiar el estado final para modificarlo
     empty_index = current_state.index(8)  # Encontrar el índice del espacio vacío
@@ -246,10 +267,12 @@ def generate_initial_state(final_state):
         empty_index = new_index
     
     return current_state
+'''
+
 
 def apply_random_moves(current_state):
     """
-    Realiza 20 movimientos aleatorios en el juego utilizando la función lol.
+    Realiza 100 movimientos aleatorios en el juego utilizando la función lol.
 
     Parameters:
         current_state (list): El estado actual del juego representado como una lista.
@@ -290,9 +313,9 @@ def heuristic(state):
     for i in range(3):
         for j in range(3):
             if state[i][j] != 0:
-                row = (state[i][j] - 1) // 3
-                col = (state[i][j] - 1) % 3
-                total_cost += abs(i - row) + abs(j - col)
+                row = (state[i][j] - 1) // 3 # (fila 0, 1 o 2) Calcular fila objetivo
+                col = (state[i][j] - 1) % 3 # (resto 0, 1 o 2) Calcular columna objetivo
+                total_cost += abs(i - row) + abs(j - col) # Sumamos la distancia desde (i,j) hasta (row,col)
     return total_cost
 
 
@@ -313,60 +336,126 @@ def generate_successors(state):
             new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]  # Intercambiar casillas
             successors.append(new_state)
     return successors
+#METODO BACKTRACKING
 
-def solve_puzzle(initial_state):
-    visited = set()
-    queue = deque([(initial_state, [])])  # Cola de tuplas: (estado actual, lista de movimientos)
-    while queue:
-        state, path = queue.popleft()
-        if is_goal(state):
-            return len(path)
-        if tuple(map(tuple, state)) not in visited:
-            visited.add(tuple(map(tuple, state)))  # Convertir lista de listas a tupla para hashable
-            for successor in generate_successors(state):
-                queue.append((successor, path + [successor]))
-    return None
+# def solve_puzzle(initial_state):
+#     visited = set()
+#     queue = deque([(initial_state, [])])  # Cola de tuplas: (estado actual, lista de movimientos)
+#     while queue:
+#         state, path = queue.popleft()
+#         if is_goal(state):
+#             return len(path)
+#         if tuple(map(tuple, state)) not in visited:
+#             visited.add(tuple(map(tuple, state)))  # Convertir lista de listas a tupla para hashable
+#             for successor in generate_successors(state):
+#                 queue.append((successor, path + [successor]))
+#     return None
 
+#METODO A ESTRELLA (ACTUALMENTE EN USO)
 def solve_puzzle_a_star(initial_state):
+    # Conjunto para almacenar los estados visitados
     visited = set()
+    # Cola de prioridad para almacenar los estados por explorar
     pq = PriorityQueue()
+    # Contador de pasos tomados
     steps_taken = 0
+    # Número máximo de pasos permitidos
     max_steps = 10000000000
+    
+    # Agregar el estado inicial a la cola de prioridad
     pq.put((0, 0, initial_state))  # Tupla: (costo acumulado, pasos restantes, estado actual)
+    
+    # Bucle principal
     while not pq.empty() and steps_taken < max_steps:
+        # Obtener el estado con menor costo de la cola de prioridad
         cost, steps, state = pq.get()
+        
+        # Comprobar si se ha alcanzado el estado objetivo
         if state == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]:
-            return steps
+            return steps  # Devolver el número de pasos tomados
+        
+        # Comprobar si el estado no ha sido visitado previamente
         if tuple(map(tuple, state)) not in visited:
+            # Agregar el estado actual al conjunto de estados visitados
             visited.add(tuple(map(tuple, state)))
+            
+            # Generar sucesores del estado actual
             for successor in generate_successors(state):
+                # Calcular la heurística para el sucesor
                 h = heuristic(successor)
+                # Calcular el costo acumulado para el sucesor
                 g = cost + 1  # Incrementar el costo acumulado
+                # Calcular la función de evaluación f(n) = g(n) + h(n)
                 f = g + h
-                pq.put((g, steps + 1, successor))
-        steps_taken += 1    
+                # Agregar el sucesor a la cola de prioridad con su costo acumulado y pasos restantes
+                pq.put((f, steps + 1, successor))
+                #pq (priority queue ordena sus elementos segun el primer elemento que se le pasa, en este caso f)
+        # Incrementar el contador de pasos tomados
+        steps_taken += 1
+    
+    # Si se excede el número máximo de pasos permitidos o la cola de prioridad está vacía, retornar None
     return None
 
-#def get_successors(state):
-    # Generar los sucesores del estado actual intercambiando la posición de la pieza vacía con sus vecinos
-    successors = []
-    empty_row, empty_col = find_empty(state)
-    
-    for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-        new_row, new_col = empty_row + dr, empty_col + dc
-        if 0 <= new_row < 4 and 0 <= new_col < 4:
-            new_state = [row[:] for row in state]  # Copiar el estado actual
-            new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]
-            successors.append(new_state)
-    
-    return successors
+#METODO BUSQUEDA EN ANCHURA
 
-#def find_empty(state):
-    # Encuentra la posición de la pieza vacía en el estado actual
-    for i in range(4):
-        for j in range(4):
-            if state[i][j] == 15:
-                return i, j
+def solve_puzzle_bfs(initial_state):
+    # Conjunto para almacenar los estados visitados
+    visited = set()
+    # Cola para almacenar los estados por explorar
+    q = Queue()
+    # Contador de pasos tomados
+    steps_taken = 0
+    # Número máximo de pasos permitidos
+    max_steps = 10000000000
+    
+    # Agregar el estado inicial a la cola
+    q.put((0, initial_state))  # Tupla: (pasos restantes, estado actual)
+    
+    # Bucle principal
+    while not q.empty() and steps_taken < max_steps:
+        # Obtener el estado de la cola
+        steps, state = q.get()
+        
+        # Comprobar si se ha alcanzado el estado objetivo
+        if state == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]:
+            return steps  # Devolver el número de pasos tomados
+        
+        # Comprobar si el estado no ha sido visitado previamente
+        if tuple(map(tuple, state)) not in visited:
+            # Agregar el estado actual al conjunto de estados visitados
+            visited.add(tuple(map(tuple, state)))
+            
+            # Generar sucesores del estado actual
+            for successor in generate_successors(state):
+                # Agregar el sucesor a la cola con los pasos restantes
+                q.put((steps + 1, successor))
+                
+        # Incrementar el contador de pasos tomados
+        steps_taken += 1
+    
+    # Si se excede el número máximo de pasos permitidos o la cola está vacía, retornar None
+    return None
+
+# def get_successors(state):
+#       #Generar los sucesores del estado actual intercambiando la posición de la pieza vacía con sus vecinos
+#     successors = []
+#     empty_row, empty_col = find_empty(state)
+    
+#     for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+#         new_row, new_col = empty_row + dr, empty_col + dc
+#         if 0 <= new_row < 4 and 0 <= new_col < 4:
+#             new_state = [row[:] for row in state]  # Copiar el estado actual
+#             new_state[empty_row][empty_col], new_state[new_row][new_col] = new_state[new_row][new_col], new_state[empty_row][empty_col]
+#             successors.append(new_state)
+    
+#     return successors
+
+# def find_empty(state):
+#     # Encuentra la posición de la pieza vacía en el estado actual
+#     for i in range(4):
+#         for j in range(4):
+#             if state[i][j] == 15:
+#                 return i, j
 
 introf=Frame(t) 
 introf.place(x=0,y=0,width=650,height=650) 
