@@ -130,47 +130,60 @@ def ayuda(event):
         
 def menu(event):
     menu = MenuApp()
-#logo.bind("<Button-1>",ayuda)
-logo.bind("<Button-1>",menu)
+
+menuImg=ImageTk.PhotoImage((Image.open("Images/menu2.gif")))
+menuLog=Label(t,image=menuImg)
+menuLog.place(x=500, y=600, width=100, height=50)
+menuLog.bind("<Button-1>",menu)
+logo.bind("<Button-1>",ayuda)
 from tkinter import messagebox 
 from tkinter import filedialog 
-cti=ImageTk.PhotoImage((Image.open("Images/cambIMG1.png"))) 
-ctiw=ImageTk.PhotoImage((Image.open("Images/cambIMG2.png"))) 
+from tkinter import simpledialog
+cti=ImageTk.PhotoImage((Image.open("Images/changeImg.png"))) 
+ctiw=ImageTk.PhotoImage((Image.open("Images/changeImg2.png"))) 
 changetheimage=Label(t,image=cti) 
-changetheimage.place(x=0,y=600,width=600,height=50) 
+changetheimage.place(x=0,y=600,width=500,height=50) 
 changetheimage.bind("<Enter>",lambda event:changetheimage.config(image=ctiw)) 
 changetheimage.bind("<Leave>",lambda event:changetheimage.config(image=cti)) 
 def cticlick(event): 
     filetypes = ( 
                 ('Images', '*.png'), 
-                ('All files', '*.png') 
+                ('All files', '*.png')
                 )
-    t.iconbitmap("Icons/image.ico") 
+    t.iconbitmap("Icons/A.ico") 
     e =filedialog.askopenfile(title='Open the image (with the same dimensions)', 
                             initialdir='/', 
                             filetypes=filetypes)
-    if e!=None: 
-        if Image.open(e.name).width!=Image.open(e.name).height: 
-            messagebox.askokcancel("","The image need to has the same dimensions") 
-        else: 
-            path=e.name 
-            listaImagenes.clear() 
-            listaImagenesCopia.clear() 
-            t.title((" "*60)+"Sliding puzzle | The image is loading ...") 
-            cmp=0 
-            for i in range(4): 
-                for j in range(4): 
-                    if i==3 and j==3: 
+    #if e!=None: 
+
+    if e is not None:
+        img = Image.open(e.name)
+        if img.width != img.height:
+            t.withdraw() #Oculta la ventana principal
+            # Si las dimensiones no coinciden, abrir una ventana de vista previa y permitir al usuario ajustarlas
+            new_width = simpledialog.askinteger("Adjust Image Dimensions", "Width (pixels):", initialvalue=img.width)
+            new_height = simpledialog.askinteger("Adjust Image Dimensions", "Height (pixels):", initialvalue=img.height)
+            t.deiconify() #Muestra la ventana principal
+            img = img.resize((new_width, new_height), Image.ANTIALIAS)
+            #img.save(e.name)  # Guardar la imagen con las nuevas dimensiones  
+        path=e.name 
+        listaImagenes.clear() 
+        listaImagenesCopia.clear() 
+        t.title((" "*60)+"Sliding puzzle | The image is loading ...") 
+        cmp=0 
+        for i in range(4): 
+            for j in range(4): 
+                if i==3 and j==3: 
                         listaImagenes.append(["",cmp]) 
                         listaImagenesCopia.append(["",cmp]) 
-                    else: 
+                else: 
                         listaImagenes.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
                         listaImagenesCopia.append([ImageTk.PhotoImage(Image.open(path).resize((600,600)).crop(((j*150),(i*150),((j*150)+150),((i*150)+150)))),cmp]) 
-                    cmp+=1
-            cos(None)
+                cmp+=1
+    cos(None)
     t.title((" "*80)+"Sliding puzzle") 
-    t.iconbitmap("Icons/w.ico") 
-changetheimage.bind("<Button-1>",cticlick) 
+    t.iconbitmap("Icons/A.ico") 
+changetheimage.bind("<Button-1>",cticlick)
 from random import shuffle 
 b=False 
 def f(): 
@@ -193,7 +206,7 @@ def cos(event):
             Lab[j].config(bg="#242424") 
     b=True 
     youwin.place_forget() 
-    changetheimage.place(x=0,y=600,width=600,height=50) 
+    changetheimage.place(x=0,y=600,width=500,height=50) 
 restart.bind("<Button-1>",cos) 
 
 
