@@ -132,9 +132,13 @@ from modoFacil import *
 def modoFacil(event):
     app = modoPrincipiante()
 logo.bind("<Button-1>",ayuda)
+
 menuImg=ImageTk.PhotoImage((Image.open("Images/menu2.gif")))
+menuImg1=ImageTk.PhotoImage((Image.open("Images/menu2verde.png")))
 menuLog=Label(t,image=menuImg)
 menuLog.place(x=500, y=600, width=100, height=50)
+menuLog.bind("<Enter>",lambda event:menuLog.config(image=menuImg1)) 
+menuLog.bind("<Leave>",lambda event:menuLog.config(image=menuImg)) 
 menuLog.bind("<Button-1>",menu)
 #logo.bind("<Button-1>",ayuda)
 from tkinter import messagebox 
