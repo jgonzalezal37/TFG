@@ -125,15 +125,18 @@ def ayuda(event):
     else:
         messagebox.askokcancel("", "Estás a "+ str(pasos)+ " pasos de llegar a la solución.")
     #messagebox.askokcancel("", "estas a ")
-logo.bind("<Button-1>",ayuda)
+
 def menu(event):
     menu = MenuApp()
-
+from modoFacil import *
+def modoFacil(event):
+    app = modoPrincipiante()
+logo.bind("<Button-1>",ayuda)
 menuImg=ImageTk.PhotoImage((Image.open("Images/menu2.gif")))
 menuLog=Label(t,image=menuImg)
 menuLog.place(x=500, y=600, width=100, height=50)
 menuLog.bind("<Button-1>",menu)
-logo.bind("<Button-1>",ayuda)
+#logo.bind("<Button-1>",ayuda)
 from tkinter import messagebox 
 from tkinter import filedialog 
 cti=ImageTk.PhotoImage((Image.open("Images/changeImg.png"))) 
